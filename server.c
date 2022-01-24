@@ -130,7 +130,9 @@ void func(int connfd)
         {
             // client did not send a GET request
             perror("unrecognized request sent by the client");
-            exit(1);
+            snprintf((char *)writebuff, sizeof(writebuff), "HTTP/1.0 400 Bad Request\r\n\r\n");
+            write(connfd, (char *)writebuff, strlen((char *)writebuff));
+            return; 
         }
 
         if (strlen(fname) > 0)
@@ -149,7 +151,9 @@ void func(int connfd)
             {
                 free(fname);
                 perror("could not send file");
-                exit(1);
+                snprintf((char *)writebuff, sizeof(writebuff), "HTTP/1.0 404 NOT FOUND\r\n\r\n");
+                write(connfd, (char *)writebuff, strlen((char *)writebuff));
+                return;
             }
         }
         else
