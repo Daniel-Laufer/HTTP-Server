@@ -13,9 +13,6 @@
 #define SERVER_PORT 8090
 #define SA struct sockaddr
 
-// change the file name to what you would like
-#define FILENAME "index.html"
-
 // Helper function designed for chat between client and server.
 void func(int connfd);
 
@@ -31,6 +28,13 @@ int send_file(char *fname, int tarsocket);
  * file name <fname>.
  */
 const char *extract_ftype(char *fname);
+
+/**
+ * Returns the the file name given the <request_info>
+ * sent from the client. Remember to free return value once
+ * there is no use to it any longer.
+ */
+char *extract_fname(char *request_info);
 
 // Driver function
 int main()
@@ -54,20 +58,20 @@ int main()
     // assign IP, SERVER_PORT
     servaddr.sin_family = AF_INET;
 
-    // this is an IP address that is used when we don't want to bind a socket to any specific IP
+    // binding the socket to any possible IP address
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 
     // setting up the port the server socket will be listening to
     servaddr.sin_port = htons(SERVER_PORT);
 
-    // Binding newly created socket to given IP and port
+    // binding newly created socket to the given IP address and port
     if ((bind(listenfd, (SA *)&servaddr, sizeof(servaddr))) != 0)
     {
         printf("socket bind failed...\n");
         exit(0);
     }
 
-    // Now server is ready to listen for new connections
+    // now server is ready to listen for new connections
     if ((listen(listenfd, 5)) != 0)
     {
         printf("Listen failed...\n");
@@ -79,24 +83,32 @@ int main()
     fflush(stdout);
 
     // Accept the data packet from client and verification
-    connfd = accept(listenfd, (SA *)NULL, NULL);
+    while ((connfd = accept(listenfd, (SA *)NULL, NULL)) >= 0)
+    {
+        printf("server accept the client...\n");
+
+        // Function for chatting between client and server
+        func(connfd);
+    }
+
     if (connfd < 0)
     {
         printf("server accept failed...\n");
         exit(0);
     }
-    printf("server accept the client...\n");
-
-    // Function for chatting between client and server
-    func(connfd);
 
     // After chatting close the socket
     close(listenfd);
 }
 
-/* implementation of the helper function */
+/* implementation of the helper functions */
+
+/**
+ * Function in charge of servicing the client based on its request
+ */
 void func(int connfd)
 {
+    char *fname;
     char buff[MAX];
     char writebuff[MAX];
     int n;
@@ -111,23 +123,35 @@ void func(int connfd)
         {
             break;
         }
+        fname = extract_fname(buff);
         memset(buff, 0, MAX);
 
-        // Sending the header of the request first
-        snprintf((char *)writebuff, sizeof(writebuff),
-                 "HTTP/1.0\r\n"
-                 "Content-type: %s\r\n\r\n",
-                 extract_ftype(FILENAME));
-
-        write(connfd, (char *)writebuff, strlen((char *)writebuff));
-
-        // Sending the body of the request
-        if (send_file(FILENAME, connfd) < 0)
+        if (strlen(fname) > 0)
         {
-            perror("could not send file");
-            exit(1);
-        }
 
+            // Sending the header of the request first
+            snprintf((char *)writebuff, sizeof(writebuff),
+                     "HTTP/1.0\r\n"
+                     "Content-type: %s\r\n\r\n",
+                     extract_ftype(fname));
+
+            write(connfd, (char *)writebuff, strlen((char *)writebuff));
+
+            // Sending the body of the request
+            if (send_file(fname, connfd) < 0)
+            {
+                free(fname);
+                perror("could not send file");
+                exit(1);
+            }
+        }
+        else
+        {
+            // nothing to send (we can change it to something else later)
+            snprintf((char *)writebuff, sizeof(writebuff), "HTTP/1.0 200 OK\r\n\r\n");
+            write(connfd, (char *)writebuff, strlen((char *)writebuff));
+        }
+        free(fname);
         close(connfd);
     }
 }
@@ -136,7 +160,7 @@ void func(int connfd)
  * Sends a given file with file name <fname> to socket <tarsocket>.
  * Upon an error, -1 is returned. Otherwise, if the operation was successful, 
  * 0 is returned.
- **/
+ */
 int send_file(char *fname, int tarsocket)
 {
     FILE *fp = fopen(fname, "rb");
@@ -168,7 +192,7 @@ int send_file(char *fname, int tarsocket)
 /**
  * Returns the content-type value based on the given
  * file name <fname>.
- **/
+ */
 const char *extract_ftype(char *fname)
 {
     char *rest = strrchr(fname, '.');
@@ -194,4 +218,45 @@ const char *extract_ftype(char *fname)
     }
 
     return "text/plain";
+}
+
+/**
+ * Returns the the file name given the <request_info>
+ * sent from the client. Remember to free return value once
+ * there is no use to it any longer.
+ */
+char *extract_fname(char *request_info)
+{
+    // ensuring that the request is of type GET
+    char request_type[4];
+    memcpy(request_type, &request_info[0], 3);
+    request_type[4] = '\0';
+    if ((strcmp(request_type, "GET")) != 0)
+    {
+        return NULL;
+    }
+    else
+    {
+        // start from index 4 since the beginning will be "GET "
+        int i = 4, size = 0;
+
+        // loop until we reach " HTTP"
+        while (1)
+        {
+            // as soon as we get to HTTP/ we know we finished parsing the filename
+            if (request_info[i + 1] == '/')
+                break;
+
+            i++;
+            size++;
+        }
+
+        // subtracting " HTTP" from file name
+        size -= 5;
+
+        char *fname = malloc(sizeof(char) * (size + 1));
+        memcpy(fname, &request_info[5], size);
+        fname[size] = '\0';
+        return fname;
+    }
 }
