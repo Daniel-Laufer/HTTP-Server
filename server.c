@@ -126,6 +126,13 @@ void func(int connfd)
         fname = extract_fname(buff);
         memset(buff, 0, MAX);
 
+        if (!fname)
+        {
+            // client did not send a GET request
+            perror("unrecognized request sent by the client");
+            exit(1);
+        }
+
         if (strlen(fname) > 0)
         {
 
@@ -164,7 +171,7 @@ void func(int connfd)
 int send_file(char *fname, int tarsocket)
 {
     FILE *fp = fopen(fname, "rb");
-    if (fp == NULL)
+    if (!fp)
     {
         perror("error in reading file");
         return -1;
