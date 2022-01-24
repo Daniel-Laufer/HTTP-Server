@@ -17,11 +17,11 @@
 void func(int connfd);
 
 /** 
- * Sends a given file with file name <fname> to socket <tarsocket>.
+ * Sends a file given a pointer to that file, with file name <fname> to target socket <tarsocket>.
  * Upon an error, -1 is returned. Otherwise, if the operation was successful, 
  * 0 is returned.
  */
-int send_file(char *fname, int tarsocket);
+int send_file(FILE *fp, char *fname, int tarsocket);
 
 /**
  * Returns the content-type value based on the given
@@ -108,6 +108,7 @@ int main()
  */
 void func(int connfd)
 {
+    FILE *fp;
     char *fname;
     char buff[MAX];
     char writebuff[MAX];
@@ -132,11 +133,23 @@ void func(int connfd)
             perror("unrecognized request sent by the client");
             snprintf((char *)writebuff, sizeof(writebuff), "HTTP/1.0 400 Bad Request\r\n\r\n");
             write(connfd, (char *)writebuff, strlen((char *)writebuff));
-            return; 
+            return;
         }
 
         if (strlen(fname) > 0)
         {
+            if (!(fp = fopen(fname, "rb")))
+            {
+                free(fname);
+                perror("error in reading file");
+                snprintf((char *)writebuff, sizeof(writebuff),
+                         "HTTP/1.0 404 NOT FOUND\r\n"
+                         "Content-type: text/html\r\n\r\n"
+                         "<h1 style='text-align: center;'>File  not found</h1>");
+                write(connfd, (char *)writebuff, strlen((char *)writebuff));
+                close(connfd);
+                return;
+            }
 
             // Sending the header of the request first
             snprintf((char *)writebuff, sizeof(writebuff),
@@ -147,40 +160,41 @@ void func(int connfd)
             write(connfd, (char *)writebuff, strlen((char *)writebuff));
 
             // Sending the body of the request
-            if (send_file(fname, connfd) < 0)
+            if (send_file(fp, fname, connfd) < 0)
             {
                 free(fname);
-                perror("could not send file");
-                snprintf((char *)writebuff, sizeof(writebuff), "HTTP/1.0 404 NOT FOUND\r\n\r\n");
-                write(connfd, (char *)writebuff, strlen((char *)writebuff));
                 return;
             }
         }
+
+        // requesting root
         else
         {
-            // nothing to send (we can change it to something else later)
-            snprintf((char *)writebuff, sizeof(writebuff), "HTTP/1.0 200 OK\r\n\r\n");
+            snprintf((char *)writebuff, sizeof(writebuff),
+                     "HTTP/1.0 200 OK\r\n"
+                     "Content-type: text/html\r\n\r\n");
             write(connfd, (char *)writebuff, strlen((char *)writebuff));
+
+            if (!(fp = fopen("index.html", "rb")) || send_file(fp, "index.html", connfd) < 0)
+            {
+                // nothing to send (we can change it to something else later)
+                snprintf((char *)writebuff, sizeof(writebuff), "HTTP/1.0 200 OK\r\n\r\n");
+                write(connfd, (char *)writebuff, strlen((char *)writebuff));
+            }
         }
+
         free(fname);
         close(connfd);
     }
 }
 
 /** 
- * Sends a given file with file name <fname> to socket <tarsocket>.
+ * Sends a file given a pointer to that file, with file name <fname> to target socket <tarsocket>.
  * Upon an error, -1 is returned. Otherwise, if the operation was successful, 
  * 0 is returned.
  */
-int send_file(char *fname, int tarsocket)
+int send_file(FILE *fp, char *fname, int tarsocket)
 {
-    FILE *fp = fopen(fname, "rb");
-    if (!fp)
-    {
-        perror("error in reading file");
-        return -1;
-    }
-
     // determining the file's size first
     fseek(fp, 0, SEEK_END);
     long size = ftell(fp);
@@ -189,7 +203,10 @@ int send_file(char *fname, int tarsocket)
     char *writebuff = malloc(sizeof(char) * size);
     int read_bytes = fread(writebuff, sizeof(char), size, fp);
     if (read_bytes <= 0)
+    {
+        perror("send_file");
         return -1;
+    }
 
     // sending the contents of the file to the client socket
     send(tarsocket, writebuff, read_bytes, 0);
