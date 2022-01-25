@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <netdb.h>
 #include <netinet/in.h>
@@ -11,22 +12,18 @@
 
 #define MAX 200
 #define SERVER_PORT 8095
+#define MAX_CONNECTIONS 5
 #define SA struct sockaddr
-
-/**
-* An extension to server.c, but with persistent connections
-* Persistent connections are handled using 
-*/
 
 // A function to handle a single persistent HTTP connection 
 void *handle_request(void *connfd);
 
 /** 
- * Sends a given file with file name <fname> to socket <tarsocket>.
+ * Sends a file given a pointer to that file, with file name <fname> to target socket <tarsocket>.
  * Upon an error, -1 is returned. Otherwise, if the operation was successful, 
  * 0 is returned.
  */
-int send_file(char *fname, int tarsocket);
+int send_file(FILE *fp, char *fname, int tarsocket);
 
 /**
  * Returns the content-type value based on the given
@@ -61,27 +58,40 @@ int main()
 
     bzero(&servaddr, sizeof(servaddr));
 
+    // assign IP, SERVER_PORT
     servaddr.sin_family = AF_INET;
+
+    // binding the socket to any possible IP address
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+    // setting up the port the server socket will be listening to
     servaddr.sin_port = htons(SERVER_PORT);
+
+    // binding newly created socket to the given IP address and port
     if ((bind(listenfd, (SA *)&servaddr, sizeof(servaddr))) != 0)
     {
         printf("socket bind failed...\n");
         exit(0);
     }
 
+    // now server is ready to listen for new connections
     if ((listen(listenfd, 5)) != 0)
     {
         printf("Listen failed...\n");
         exit(0);
     }
     printf("Server listening..\n");
+
+    // flush whatever is in the stdout buffer
     fflush(stdout);
 
+    // Accept the data packet from client and verification
     while ((connfd = accept(listenfd, (SA *)NULL, NULL)) >= 0)
     {
         printf("server accept the client...\n");
+        // Function for chatting between client and server
         pthread_create(&id[0], NULL, handle_request, &connfd);
+
     }
 
     if (connfd < 0)
@@ -94,6 +104,7 @@ int main()
     close(listenfd);
 }
 
+/* implementation of the helper functions */
 
 /**
  * Function in charge of servicing the client based on its request
@@ -101,79 +112,103 @@ int main()
 void *handle_request(void *arg)
 {
     int connfd = *(int *) arg;
-    while (1) 
-    {
+    while (1) {
+        printf("[LOG] %d In main loop\n", connfd);
+        FILE *fp;
         char *fname;
         char buff[MAX];
         char writebuff[MAX];
         int n;
-        
         bzero(buff, MAX);
 
         // read the message from client and copy it in buffer
+        
         while ((n = read(connfd, buff, MAX - 1)) > 0)
         {
             // hacky way to detect the end of the message.
             printf("%s\n", buff);
             if (buff[n - 1] == '\n')
             {
+                printf("[LOG] %d Detected end of line\n", connfd);
                 break;
             }
             fname = extract_fname(buff);
             memset(buff, 0, MAX);
 
             if (!fname)
-            {
-                continue;
+            {   
+                // TODO: Handle invalid requests better. 
+                // For now - ignore additional fields obtained from read. 
+                continue;     
             }
 
             if (strlen(fname) > 0)
             {
+                if (!(fp = fopen(fname, "rb")))
+                {
+                    free(fname);
+                    printf("error in reading file");
+                    snprintf((char *)writebuff, sizeof(writebuff),
+                            "HTTP/1.0 404 NOT FOUND\r\n"
+                            "Connection: close\r\n"
+                            "Content-type: text/html\r\n\r\n"
+                            "<h1 style='text-align: center;'>File  not found</h1>");
+                    write(connfd, (char *)writebuff, strlen((char *)writebuff));
+                    close(connfd);
+                    pthread_exit(NULL);
+                }
+
                 // Sending the header of the request first
                 snprintf((char *)writebuff, sizeof(writebuff),
                         "HTTP/1.0\r\n"
+                        "Connection: Keep-Alive\r\n"
+                        "Keep-Alive: timeout=100, max=1000\r\n"
                         "Content-type: %s\r\n\r\n",
                         extract_ftype(fname));
 
                 write(connfd, (char *)writebuff, strlen((char *)writebuff));
-
+                printf("[LOG] Starting to send the body of the request\n");
                 // Sending the body of the request
-                if (send_file(fname, connfd) < 0)
+                if (send_file(fp, fname, connfd) < 0)
                 {
-                    free(fname);
-                    perror("could not send file");
-                    snprintf((char *)writebuff, sizeof(writebuff), "HTTP/1.0 404 NOT FOUND\r\n\r\n");
-                    write(connfd, (char *)writebuff, strlen((char *)writebuff));
-                    pthread_exit(&connfd);
+                    free(fname); 
                 }
+                printf("[LOG] %d File send completed\n", connfd);
             }
+
+            // requesting root
             else
             {
-                // nothing to send (we can change it to something else later)
-                snprintf((char *)writebuff, sizeof(writebuff), "HTTP/1.0 200 OK\r\n\r\n");
+                snprintf((char *)writebuff, sizeof(writebuff),
+                        "HTTP/1.0 200 OK\r\n"
+                        "Content-type: text/html\r\n\r\n");
                 write(connfd, (char *)writebuff, strlen((char *)writebuff));
+
+                if (!(fp = fopen("index.html", "rb")) || send_file(fp, "index.html", connfd) < 0)
+                {
+                    // nothing to send (we can change it to something else later)
+                    snprintf((char *)writebuff, sizeof(writebuff), "HTTP/1.0 200 OK\r\n\r\n");
+                    write(connfd, (char *)writebuff, strlen((char *)writebuff));
+                }
             }
+
             free(fname);
+            
         }
     }
-    close(connfd);    
-    pthread_exit(&connfd);
+
+    // TODO: This is never reached at the moment. 
+    close(connfd);
+    pthread_exit(NULL);
 }
 
 /** 
- * Sends a given file with file name <fname> to socket <tarsocket>.
+ * Sends a file given a pointer to that file, with file name <fname> to target socket <tarsocket>.
  * Upon an error, -1 is returned. Otherwise, if the operation was successful, 
  * 0 is returned.
  */
-int send_file(char *fname, int tarsocket)
+int send_file(FILE *fp, char *fname, int tarsocket)
 {
-    FILE *fp = fopen(fname, "rb");
-    if (!fp)
-    {
-        perror("error in reading file");
-        return -1;
-    }
-
     // determining the file's size first
     fseek(fp, 0, SEEK_END);
     long size = ftell(fp);
@@ -182,7 +217,10 @@ int send_file(char *fname, int tarsocket)
     char *writebuff = malloc(sizeof(char) * size);
     int read_bytes = fread(writebuff, sizeof(char), size, fp);
     if (read_bytes <= 0)
+    {
+        perror("send_file");
         return -1;
+    }
 
     // sending the contents of the file to the client socket
     send(tarsocket, writebuff, read_bytes, 0);
@@ -255,7 +293,7 @@ char *extract_fname(char *request_info)
             size++;
         }
 
-        // subtracting "HTTP" from file name
+        // subtracting " HTTP" from file name
         size -= 5;
 
         char *fname = malloc(sizeof(char) * (size + 1));
