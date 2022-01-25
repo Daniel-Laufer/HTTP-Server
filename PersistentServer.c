@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#include <sys/stat.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <stdlib.h>
@@ -11,7 +12,7 @@
 #include <pthread.h>
 
 #define MAX 200
-#define SERVER_PORT 8095
+#define SERVER_PORT 8099
 #define MAX_CONNECTIONS 5
 #define SA struct sockaddr
 
@@ -37,6 +38,12 @@ const char *extract_ftype(char *fname);
  * there is no use to it any longer.
  */
 char *extract_fname(char *request_info);
+
+/**
+* Return the file size
+*/ 
+int get_size(char *fname);
+
 
 // Driver function
 int main()
@@ -114,6 +121,7 @@ void *handle_request(void *arg)
     int connfd = *(int *) arg;
     while (1) {
         printf("[LOG] %d In main loop\n", connfd);
+        usleep(1000000);
         FILE *fp;
         char *fname;
         char buff[MAX];
@@ -160,10 +168,12 @@ void *handle_request(void *arg)
 
                 // Sending the header of the request first
                 snprintf((char *)writebuff, sizeof(writebuff),
-                        "HTTP/1.0\r\n"
-                        "Connection: Keep-Alive\r\n"
-                        "Keep-Alive: timeout=100, max=1000\r\n"
+                        "HTTP/1.1\r\n"
+                        "Connection: keep-alive\r\n"
+                        "Keep-Alive: timeout=300, max=1000\r\n"
+                        "Content-Length: %d\r\n"
                         "Content-type: %s\r\n\r\n",
+                        get_size(fname),
                         extract_ftype(fname));
 
                 write(connfd, (char *)writebuff, strlen((char *)writebuff));
@@ -179,9 +189,11 @@ void *handle_request(void *arg)
             // requesting root
             else
             {
+                int content_length = get_size("index.html");
                 snprintf((char *)writebuff, sizeof(writebuff),
                         "HTTP/1.0 200 OK\r\n"
-                        "Content-type: text/html\r\n\r\n");
+                        "Content-Length: %d\r\n"
+                        "Content-type: text/html\r\n\r\n", content_length);
                 write(connfd, (char *)writebuff, strlen((char *)writebuff));
 
                 if (!(fp = fopen("index.html", "rb")) || send_file(fp, "index.html", connfd) < 0)
@@ -198,6 +210,7 @@ void *handle_request(void *arg)
     }
 
     // TODO: This is never reached at the moment. 
+    // Instead, need to wait 10 seconds. 
     close(connfd);
     pthread_exit(NULL);
 }
@@ -260,6 +273,15 @@ const char *extract_ftype(char *fname)
     }
 
     return "text/plain";
+}
+
+/**
+* Get file size 
+*/
+int get_size(char *fname) {
+    struct stat st;
+    stat(fname, &st);
+    return st.st_size; 
 }
 
 /**
