@@ -10,7 +10,7 @@
 #include <pthread.h>
 
 #define MAX 200
-#define SERVER_PORT 8090
+#define SERVER_PORT 8095
 #define SA struct sockaddr
 
 /**
@@ -18,7 +18,7 @@
 * Persistent connections are handled using 
 */
 
-// Helper function designed for chat between client and server.
+// A function to handle a single persistent HTTP connection 
 void *handle_request(void *connfd);
 
 /** 
@@ -101,63 +101,62 @@ int main()
 void *handle_request(void *arg)
 {
     int connfd = *(int *) arg;
-    char *fname;
-    char buff[MAX];
-    char writebuff[MAX];
-    int n;
-    bzero(buff, MAX);
-
-    // read the message from client and copy it in buffer
-    while ((n = read(connfd, buff, MAX - 1)) > 0)
+    while (1) 
     {
-        // hacky way to detect the end of the message.
-        printf("%s\n", buff);
-        if (buff[n - 1] == '\n')
+        char *fname;
+        char buff[MAX];
+        char writebuff[MAX];
+        int n;
+        
+        bzero(buff, MAX);
+
+        // read the message from client and copy it in buffer
+        while ((n = read(connfd, buff, MAX - 1)) > 0)
         {
-            break;
-        }
-        fname = extract_fname(buff);
-        memset(buff, 0, MAX);
-
-        if (!fname)
-        {
-            // client did not send a GET request
-            perror("unrecognized request sent by the client");
-            snprintf((char *)writebuff, sizeof(writebuff), "HTTP/1.0 400 Bad Request\r\n\r\n");
-            write(connfd, (char *)writebuff, strlen((char *)writebuff));
-            pthread_exit(&connfd);
-        }
-
-        if (strlen(fname) > 0)
-        {
-
-            // Sending the header of the request first
-            snprintf((char *)writebuff, sizeof(writebuff),
-                     "HTTP/1.0\r\n"
-                     "Content-type: %s\r\n\r\n",
-                     extract_ftype(fname));
-
-            write(connfd, (char *)writebuff, strlen((char *)writebuff));
-
-            // Sending the body of the request
-            if (send_file(fname, connfd) < 0)
+            // hacky way to detect the end of the message.
+            printf("%s\n", buff);
+            if (buff[n - 1] == '\n')
             {
-                free(fname);
-                perror("could not send file");
-                snprintf((char *)writebuff, sizeof(writebuff), "HTTP/1.0 404 NOT FOUND\r\n\r\n");
-                write(connfd, (char *)writebuff, strlen((char *)writebuff));
-                pthread_exit(&connfd);
+                break;
             }
+            fname = extract_fname(buff);
+            memset(buff, 0, MAX);
+
+            if (!fname)
+            {
+                continue;
+            }
+
+            if (strlen(fname) > 0)
+            {
+                // Sending the header of the request first
+                snprintf((char *)writebuff, sizeof(writebuff),
+                        "HTTP/1.0\r\n"
+                        "Content-type: %s\r\n\r\n",
+                        extract_ftype(fname));
+
+                write(connfd, (char *)writebuff, strlen((char *)writebuff));
+
+                // Sending the body of the request
+                if (send_file(fname, connfd) < 0)
+                {
+                    free(fname);
+                    perror("could not send file");
+                    snprintf((char *)writebuff, sizeof(writebuff), "HTTP/1.0 404 NOT FOUND\r\n\r\n");
+                    write(connfd, (char *)writebuff, strlen((char *)writebuff));
+                    pthread_exit(&connfd);
+                }
+            }
+            else
+            {
+                // nothing to send (we can change it to something else later)
+                snprintf((char *)writebuff, sizeof(writebuff), "HTTP/1.0 200 OK\r\n\r\n");
+                write(connfd, (char *)writebuff, strlen((char *)writebuff));
+            }
+            free(fname);
         }
-        else
-        {
-            // nothing to send (we can change it to something else later)
-            snprintf((char *)writebuff, sizeof(writebuff), "HTTP/1.0 200 OK\r\n\r\n");
-            write(connfd, (char *)writebuff, strlen((char *)writebuff));
-        }
-        free(fname);
-        close(connfd);
     }
+    close(connfd);    
     pthread_exit(&connfd);
 }
 
