@@ -7,12 +7,13 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <poll.h> 
 #include <fcntl.h>
 #include <unistd.h>
 #include <pthread.h>
 
 #define MAX 200
-#define SERVER_PORT 8099
+#define SERVER_PORT 8098
 #define MAX_CONNECTIONS 5
 #define SA struct sockaddr
 
@@ -49,7 +50,7 @@ int get_size(char *fname);
 int main()
 {
     int listenfd, connfd;
-    pthread_t id[5];
+    pthread_t id;
 
     // specifies a transport address and port for the AF_INET address family
     struct sockaddr_in servaddr;
@@ -82,7 +83,7 @@ int main()
     }
 
     // now server is ready to listen for new connections
-    if ((listen(listenfd, 5)) != 0)
+    if ((listen(listenfd, MAX_CONNECTIONS)) != 0)
     {
         printf("Listen failed...\n");
         exit(0);
@@ -96,9 +97,7 @@ int main()
     while ((connfd = accept(listenfd, (SA *)NULL, NULL)) >= 0)
     {
         printf("server accept the client...\n");
-        // Function for chatting between client and server
-        pthread_create(&id[0], NULL, handle_request, &connfd);
-
+        pthread_create(&id, NULL, handle_request, &connfd);
     }
 
     if (connfd < 0)
@@ -120,14 +119,23 @@ void *handle_request(void *arg)
 {
     int connfd = *(int *) arg;
     while (1) {
-        printf("[LOG] %d In main loop\n", connfd);
-        usleep(1000000);
         FILE *fp;
         char *fname;
         char buff[MAX];
         char writebuff[MAX];
         int n;
         bzero(buff, MAX);
+
+        // Wait for input on the connfd socket. 
+        // If there is input after 10 seconds, close the connectrion. 
+
+        struct pollfd fds; 
+        fds.fd = connfd; 
+        fds.events = POLLIN;
+        int ret = poll(&fds, 1, 60000);
+        if (ret == 0) {
+            goto close_connection;
+        }
 
         // read the message from client and copy it in buffer
         
@@ -137,7 +145,6 @@ void *handle_request(void *arg)
             printf("%s\n", buff);
             if (buff[n - 1] == '\n')
             {
-                printf("[LOG] %d Detected end of line\n", connfd);
                 break;
             }
             fname = extract_fname(buff);
@@ -156,34 +163,34 @@ void *handle_request(void *arg)
                 {
                     free(fname);
                     printf("error in reading file");
+                    char *notfound = "<h1 style='text-align: center;'>File not found</h1>";
+                    int length = strlen(notfound);
                     snprintf((char *)writebuff, sizeof(writebuff),
                             "HTTP/1.0 404 NOT FOUND\r\n"
                             "Connection: close\r\n"
+                            "Content-Length: %d\r\n"
                             "Content-type: text/html\r\n\r\n"
-                            "<h1 style='text-align: center;'>File  not found</h1>");
+                            "%s", length, notfound);
                     write(connfd, (char *)writebuff, strlen((char *)writebuff));
-                    close(connfd);
-                    pthread_exit(NULL);
+                    goto close_connection;
                 }
 
                 // Sending the header of the request first
                 snprintf((char *)writebuff, sizeof(writebuff),
                         "HTTP/1.1\r\n"
                         "Connection: keep-alive\r\n"
-                        "Keep-Alive: timeout=300, max=1000\r\n"
+                        "Keep-Alive: timeout=60, max=1000\r\n"
                         "Content-Length: %d\r\n"
                         "Content-type: %s\r\n\r\n",
                         get_size(fname),
                         extract_ftype(fname));
 
                 write(connfd, (char *)writebuff, strlen((char *)writebuff));
-                printf("[LOG] Starting to send the body of the request\n");
                 // Sending the body of the request
                 if (send_file(fp, fname, connfd) < 0)
                 {
                     free(fname); 
                 }
-                printf("[LOG] %d File send completed\n", connfd);
             }
 
             // requesting root
@@ -209,8 +216,7 @@ void *handle_request(void *arg)
         }
     }
 
-    // TODO: This is never reached at the moment. 
-    // Instead, need to wait 10 seconds. 
+close_connection:
     close(connfd);
     pthread_exit(NULL);
 }
