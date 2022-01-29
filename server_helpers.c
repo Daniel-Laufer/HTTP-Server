@@ -43,7 +43,7 @@ void communicate_with_client(int connfd)
             
             return;
         }
-
+        time_t now = time(NULL);
         if (strlen(fname) > 0)
         {
             
@@ -58,9 +58,8 @@ void communicate_with_client(int connfd)
                 char body[] = "<h1 style='text-align: center;'>File not found</h1>";
                 char response[MAX];
                 char *http_status_code = "HTTP/1.0 404 Not found";
-                 time_t now = time(&now);
-                 struct tm *current_time = gmtime(&now);
-                 char *date_header = asctime(current_time);
+                 char date_header[25];
+                 strftime(date_header, 25, "%a, %d %b %Y %H:%M:%S", gmtime(&now));
                 int num_printed = sprintf(response, "%s\r\n%s\r\n\r\n%s", http_status_code, date_header, body);
                 response[num_printed] = '\0';
                 send_response(connfd, writebuff, response, 1);
@@ -73,9 +72,9 @@ void communicate_with_client(int connfd)
                 free(fname);
                 char response[MAX];
                 char *http_status_code = "HTTP/1.0 304 Not Modified";
-                 time_t now = time(&now);
-                 struct tm *current_time = gmtime(&now);
-                 char *date_header = asctime(current_time);
+                 char date_header[26];
+                 strftime(date_header, 25, "%a, %d %b %Y %H:%M:%S", gmtime(&now));
+                 date_header[25] = '\0';
                 int num_printed = sprintf(response, "%s\r\n%s\r\n\r\n", http_status_code, date_header); // no body sent for 304 response
                 response[num_printed] = '\0';
                 
@@ -85,9 +84,10 @@ void communicate_with_client(int connfd)
             else{
                 char response[MAX];
                 char *http_status_code = "HTTP/1.0 200 Success";
-                 time_t now = time(&now);
-                 struct tm *current_time = gmtime(&now);
-                 char *date_header = asctime(current_time);
+                 
+                 char date_header[26];
+                 strftime(date_header, 25, "%a, %d %b %Y %H:%M:%S", gmtime(&now));
+                 date_header[25] = '\0';
                  char content_type_header[30];
                  sprintf(content_type_header, "Content-type: %s", extract_ftype(fname));
                 int num_printed = sprintf(response, "%s\r\n%s\r\n%s\r\n\r\n", http_status_code, date_header, content_type_header); 
@@ -114,9 +114,9 @@ void communicate_with_client(int connfd)
                 free(fname);
                 char response[MAX];
                 char *http_status_code = "HTTP/1.0 304 Not Modified";
-                 time_t now = time(&now);
-                 struct tm *current_time = gmtime(&now);
-                 char *date_header = asctime(current_time);
+                 char date_header[26];
+                 strftime(date_header, 25, "%a, %d %b %Y %H:%M:%S", gmtime(&now));
+                 date_header[25] = '\0';
                 int num_printed = sprintf(response, "%s\r\n%s\r\n\r\n", http_status_code, date_header); // no body sent for 304 response
                 response[num_printed] = '\0';
                 
@@ -126,9 +126,9 @@ void communicate_with_client(int connfd)
             
             char response[MAX];
                 char *http_status_code = "HTTP/1.0 200 Success";
-                 time_t now = time(&now);
-                 struct tm *current_time = gmtime(&now);
-                 char *date_header = asctime(current_time);
+                 char date_header[26];
+                 strftime(date_header, 25, "%a, %d %b %Y %H:%M:%S", gmtime(&now));
+                 date_header[25] = '\0';
                  char content_type_header[] = "Content-type: text/html";
                 int num_printed = sprintf(response, "%s\r\n%s\r\n%s\r\n\r\n", http_status_code, date_header, content_type_header); 
                 response[num_printed] = '\0';
