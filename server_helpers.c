@@ -7,10 +7,11 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <time.h> 
 #include <sys/stat.h>
 #include <string.h>
 #include "server_helpers.h"
+#define __USE_XOPEN
+#include <time.h> 
 
 /* implementation of the helper functions */
 
@@ -30,7 +31,7 @@ void communicate_with_client(int connfd)
     char content_length_header[MAX];
     char date_header[32];
     long file_size;
-    char response[MAX];
+    char response[1000];
 
     // read the message from client and copy it in buffer
     while ((n = read(connfd, buff, MAX - 1)) > 0)
