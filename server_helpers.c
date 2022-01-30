@@ -318,6 +318,12 @@ long get_file_size(FILE *fp){
     return size;
 }
 
+int min(int a, int b) {
+    if (a > b) 
+        return b;
+    return a;
+}
+
 
 /** 
  * Sends a file given a pointer to that file, with file name <fname> to target socket <tarsocket>.
@@ -327,22 +333,25 @@ long get_file_size(FILE *fp){
 int send_file(FILE *fp, char *fname, int tarsocket)
 {
     // determining the file's size first
-    long size = get_file_size(fp);
-    
+    long bytes_left = get_file_size(fp);
+    int read_bytes;
+    char byte;
 
-    char *writebuff = malloc(sizeof(char) * size);
-    int read_bytes = fread(writebuff, sizeof(char), size, fp);
-    if (read_bytes <= 0)
-    {
-        perror("send_file");
-        return -1;
+    // while there are no bytes left to be sent
+    while(bytes_left >= 0) {
+        // reading and sending one byte a time to ensure
+        // no data loss occurs
+        read_bytes = fread(&byte, sizeof(char), 1, fp);
+        if (read_bytes <= 0)
+        {
+            perror("send_file");
+            return -1;
+        }
+
+        send(tarsocket, &byte, read_bytes, 0);
+        bytes_left--;
     }
 
-    // sending the contents of the file to the client socket
-    send(tarsocket, writebuff, read_bytes, 0);
-
-    // cleaning up
-    free(writebuff);
     fclose(fp);
     return 0;
 }
