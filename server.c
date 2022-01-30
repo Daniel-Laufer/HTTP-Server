@@ -37,14 +37,14 @@ int main()
     }
     bzero(&servaddr, sizeof(servaddr));
 
-    // assign IP, SERVER_PORT
+    // assign IP, NON_PERSIS_SERVER_PORT
     servaddr.sin_family = AF_INET;
 
     // binding the socket to any possible IP address
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 
     // setting up the port the server socket will be listening to
-    servaddr.sin_port = htons(SERVER_PORT);
+    servaddr.sin_port = htons(NON_PERSIS_SERVER_PORT);
 
     // binding newly created socket to the given IP address and port
     if ((bind(listenfd, (SA *)&servaddr, sizeof(servaddr))) != 0)
@@ -70,7 +70,7 @@ int main()
         printf("server accept the client...\n");
 
         // Function for chatting between client and server
-        communicate_with_client(connfd);
+        non_persistent_communication_with_client(connfd);
     }
 
     if (connfd < 0)
