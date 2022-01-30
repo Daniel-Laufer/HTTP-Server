@@ -26,6 +26,11 @@ void communicate_with_client(int connfd)
     char writebuff[MAX];
     int n;
     bzero(buff, MAX);
+    time_t now = time(NULL);
+    char content_length_header[MAX];
+    char date_header[32];
+    long file_size;
+    char response[MAX];
 
     // read the message from client and copy it in buffer
     while ((n = read(connfd, buff, MAX - 1)) > 0)
@@ -43,7 +48,8 @@ void communicate_with_client(int connfd)
             
             return;
         }
-        time_t now = time(NULL);
+        
+
         if (strlen(fname) > 0)
         {
             
@@ -53,13 +59,18 @@ void communicate_with_client(int connfd)
                 free(fname);
                 
                 perror("error in reading file");
+                 // generating response headers
                 char status_code_header[] = "HTTP/1.0 404 Not Found";
                 char content_type_header[] = "Content-type: text/html";
                 char body[] = "<h1 style='text-align: center;'>File not found</h1>";
-                char response[MAX];
+                
                 char *http_status_code = "HTTP/1.0 404 Not found";
-                 char date_header[25];
-                 strftime(date_header, 25, "%a, %d %b %Y %H:%M:%S", gmtime(&now));
+                 
+                 strftime(date_header, 32, "Date: %a, %d %b %Y %H:%M:%S", gmtime(&now));
+                 date_header[31] = '\0';
+
+                
+
                 int num_printed = sprintf(response, "%s\r\n%s\r\n\r\n%s", http_status_code, date_header, body);
                 response[num_printed] = '\0';
                 send_response(connfd, writebuff, response, 1);
@@ -67,31 +78,45 @@ void communicate_with_client(int connfd)
             }
 
             // if an If-Modified-Since header is provided then conditionally return a 304 Not Modified status with no body.
-            printf("\n\n%s\n", fname);
             if(!has_requested_file_been_modified_since(fname, buff)){
                 free(fname);
-                char response[MAX];
+                // generating response headers
                 char *http_status_code = "HTTP/1.0 304 Not Modified";
-                 char date_header[26];
-                 strftime(date_header, 25, "%a, %d %b %Y %H:%M:%S", gmtime(&now));
-                 date_header[25] = '\0';
-                int num_printed = sprintf(response, "%s\r\n%s\r\n\r\n", http_status_code, date_header); // no body sent for 304 response
+                
+                
+                 strftime(date_header, 32, "Date: %a, %d %b %Y %H:%M:%S", gmtime(&now));
+                 date_header[31] = '\0';
+                 
+
+                sprintf(content_length_header, "Content-length: 0");
+
+                int num_printed = sprintf(response, "%s\r\n%s\r\n%s\r\n\r\n", http_status_code, content_length_header, date_header); // no body sent for 304 response
                 response[num_printed] = '\0';
+                // end generating response headers
                 
                 send_response(connfd, writebuff, response, 1) ; // 1 => close the connection 
                 return;
             }
             else{
-                char response[MAX];
+                // generating response headers
                 char *http_status_code = "HTTP/1.0 200 Success";
                  
-                 char date_header[26];
-                 strftime(date_header, 25, "%a, %d %b %Y %H:%M:%S", gmtime(&now));
-                 date_header[25] = '\0';
+                 strftime(date_header, 32, "Date: %a, %d %b %Y %H:%M:%S", gmtime(&now));
+                 date_header[31] = '\0';
+
+
+
                  char content_type_header[30];
                  sprintf(content_type_header, "Content-type: %s", extract_ftype(fname));
-                int num_printed = sprintf(response, "%s\r\n%s\r\n%s\r\n\r\n", http_status_code, date_header, content_type_header); 
+                 
+                 
+                 char content_length_header[MAX];
+                file_size = get_file_size(fp);
+                sprintf(content_length_header, "Content-length: %ld", file_size);
+
+                int num_printed = sprintf(response, "%s\r\n%s\r\n%s\r\n%s\r\n\r\n", http_status_code, date_header, content_length_header, content_type_header); 
                 response[num_printed] = '\0';
+                 // end generating response headers
                 
                 send_response(connfd, writebuff, response, 0); // 0 => don't close the connection yet
 
@@ -108,34 +133,53 @@ void communicate_with_client(int connfd)
         // requesting the root file
         else
         {
+            
             char *root_fname = "index.html";
             // if an If-Modified-Since header is provided then conditionally return a 304 Not Modified status with no body.
             if(!has_requested_file_been_modified_since(root_fname, buff)){
                 free(fname);
-                char response[MAX];
+
+
+                // generating response headers
+
                 char *http_status_code = "HTTP/1.0 304 Not Modified";
-                 char date_header[26];
-                 strftime(date_header, 25, "%a, %d %b %Y %H:%M:%S", gmtime(&now));
-                 date_header[25] = '\0';
-                int num_printed = sprintf(response, "%s\r\n%s\r\n\r\n", http_status_code, date_header); // no body sent for 304 response
-                response[num_printed] = '\0';
+                 
+                 strftime(date_header, 32, "Date: %a, %d %b %Y %H:%M:%S", gmtime(&now));
+                 date_header[31] = '\0';
+
+                char content_length_header[MAX];
+                sprintf(content_length_header, "Content-length: 0");
                 
+
+                int num_printed = sprintf(response, "%s\r\n%s\r\n%s\r\n\r\n", http_status_code, content_length_header, date_header); // no body sent for 304 response
+                response[num_printed] = '\0';
+                // end generating response headers
+
                 send_response(connfd, writebuff, response, 1) ; // 1 => close the connection 
                 return;
             }
-            
-            char response[MAX];
-                char *http_status_code = "HTTP/1.0 200 Success";
-                 char date_header[26];
-                 strftime(date_header, 25, "%a, %d %b %Y %H:%M:%S", gmtime(&now));
-                 date_header[25] = '\0';
-                 char content_type_header[] = "Content-type: text/html";
-                int num_printed = sprintf(response, "%s\r\n%s\r\n%s\r\n\r\n", http_status_code, date_header, content_type_header); 
-                response[num_printed] = '\0';
+            char *http_status_code = "HTTP/1.0 200 Success";
                 
-                send_response(connfd, writebuff, response, 0); // 0 => don't close the connection yet
 
-            if (!(fp = fopen(root_fname, "rb")) || send_file(fp, root_fname, connfd) < 0)
+            strftime(date_header, 32, "Date: %a, %d %b %Y %H:%M:%S", gmtime(&now));
+            date_header[31] = '\0';
+
+            char content_type_header[] = "Content-type: text/html";
+            
+            
+            
+            fp = fopen(root_fname, "rb");
+            file_size = get_file_size(fp);
+            sprintf(content_length_header, "Content-length: %ld", file_size);
+
+
+
+            int num_printed = sprintf(response, "%s\r\n%s\r\n%s\r\n%s\r\n\r\n", http_status_code, content_length_header, date_header, content_type_header); 
+            response[num_printed] = '\0';
+                
+            send_response(connfd, writebuff, response, 0); // 0 => don't close the connection yet
+
+            if (!fp || send_file(fp, root_fname, connfd) < 0)
             {
                 // nothing to send (we can change it to something else later)
                 snprintf((char *)writebuff, sizeof(writebuff), "HTTP/1.0 200 OK\r\n\r\n");
@@ -263,6 +307,15 @@ const char *extract_ftype(char *fname)
     return "text/plain";
 }
 
+/*
+Return the size of this file (number of bytes).
+*/
+long get_file_size(FILE *fp){
+   fseek(fp, 0, SEEK_END);
+    long size = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+    return size;
+}
 
 
 /** 
@@ -273,9 +326,8 @@ const char *extract_ftype(char *fname)
 int send_file(FILE *fp, char *fname, int tarsocket)
 {
     // determining the file's size first
-    fseek(fp, 0, SEEK_END);
-    long size = ftell(fp);
-    fseek(fp, 0, SEEK_SET);
+    long size = get_file_size(fp);
+    
 
     char *writebuff = malloc(sizeof(char) * size);
     int read_bytes = fread(writebuff, sizeof(char), size, fp);
@@ -334,7 +386,6 @@ int send_response(int connfd, char *writebuff, char *message_to_write, int close
     printf("===================");
     printf("\n\nSending following response to client:\n%s\n", message_to_write);
     int num_written = write(connfd, message_to_write, strlen((char *)message_to_write));
-    printf("\n%d bytes were written to the client.\n", num_written);
     printf("===================\n");
     if(close_connection)
         close(connfd);

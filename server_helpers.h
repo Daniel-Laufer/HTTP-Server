@@ -9,6 +9,10 @@ Function responsible for communicating with client
 void communicate_with_client(int connfd);
 
 
+/*
+Return the size of this file (number of bytes).
+*/
+long get_file_size(FILE *fp);
 
 /** 
  * Sends a file given a pointer to that file, with file name <fname> to target socket <tarsocket>.
