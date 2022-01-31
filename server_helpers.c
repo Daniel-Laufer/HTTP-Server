@@ -432,7 +432,7 @@ int send_file(FILE *fp, char *fname, int tarsocket)
     char byte;
 
     // while there are no bytes left to be sent
-    while(bytes_left >= 0) {
+    while(bytes_left >0) {
         // reading and sending one byte a time to ensure
         // no data loss occurs
         read_bytes = fread(&byte, sizeof(char), 1, fp);
