@@ -55,7 +55,8 @@ void non_persistent_communication_with_client(int connfd)
 
         if (strlen(fname) == 0){
             free(fname);
-            fname = "index.html";
+            fname = malloc(sizeof(char) * 11);
+            memcpy(fname, "index.html", 11);
         }
             
         // opening file for reading
@@ -183,8 +184,6 @@ void *persistent_communication_with_client(void *arg)
                 break;
             fname = extract_fname(buff);
 
-            memset(buff, 0, MAX);
-
 
             // unsupported HTTP method provided
             if(!is_http_method_get(buff)){
@@ -194,17 +193,18 @@ void *persistent_communication_with_client(void *arg)
             }
 
             if (strlen(fname) == 0){
-                free(fname);
-                fname = "index.html";
+               free(fname);
+               fname = malloc(sizeof(char) * 11);
+               memcpy(fname, "index.html", 11);
             }
       
 
+            
             
             // opening file for reading
             if (!(fp = fopen(fname, "rb")))
             {
                 free(fname);
-                
                 perror("error in reading file");
                     // generating response headers
                 char status_code_header[] = "HTTP/1.0 404 Not Found";
