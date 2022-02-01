@@ -42,6 +42,7 @@ void non_persistent_communication_with_client(int connfd)
     char response[1000];
     char *website_dir = "website/";
     int website_dir_length = strlen(website_dir);
+    char *connection_close_header = "Connection: close";
 
     // read the message from client and copy it in buffer
     while ((n = read(connfd, buff, MAX - 1)) > 0)
@@ -98,7 +99,7 @@ void non_persistent_communication_with_client(int connfd)
 
             int num_printed = sprintf(response, "%s\r\n%s\r\n\r\n%s", http_status_code, date_header, body);
             response[num_printed] = '\0';
-            send_response(connfd, writebuff, response, 1);
+            send_response(connfd, writebuff, response);
             return;
         }
 
@@ -116,11 +117,11 @@ void non_persistent_communication_with_client(int connfd)
 
             sprintf(content_length_header, "Content-length: 0");
 
-            int num_printed = sprintf(response, "%s\r\n%s\r\n%s\r\n\r\n", http_status_code, content_length_header, date_header); // no body sent for 304 response
+            int num_printed = sprintf(response, "%s\r\n%s\r\n%s\r\n%s\r\n\r\n", http_status_code, connection_close_header, content_length_header, date_header); // no body sent for 304 response
             response[num_printed] = '\0';
             // end generating response headers
             
-            send_response(connfd, writebuff, response, 1) ; // 1 => close the connection 
+            send_response(connfd, writebuff, response);
             return;
         }
         else{
@@ -142,11 +143,11 @@ void non_persistent_communication_with_client(int connfd)
             file_size = get_file_size(fp);
             sprintf(content_length_header, "Content-length: %ld", file_size);
 
-            int num_printed = sprintf(response, "%s\r\n%s\r\n%s\r\n%s\r\n\r\n", http_status_code, date_header, content_length_header, content_type_header); 
+            int num_printed = sprintf(response, "%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n\r\n", http_status_code, date_header, content_length_header, connection_close_header,  content_type_header); 
             response[num_printed] = '\0';
                 // end generating response headers
             
-            send_response(connfd, writebuff, response, 0); // 0 => don't close the connection yet
+            send_response(connfd, writebuff, response); 
 
             // Sending the body of the request
             if (send_file(fp, fpath, connfd) < 0)
@@ -157,7 +158,6 @@ void non_persistent_communication_with_client(int connfd)
         }
 
         free(fpath);
-        close(connfd);
     }
 }
 
@@ -253,7 +253,7 @@ void *persistent_communication_with_client(void *arg)
                 
                 int num_printed = sprintf(response, "%s\r\n%s\r\n%s\r\n\r\n%s", http_status_code, connection_close_header ,date_header, body);
                 response[num_printed] = '\0';
-                send_response(connfd, writebuff, response, 0);
+                send_response(connfd, writebuff, response);
                 goto close_connection;
             }
 
@@ -273,7 +273,7 @@ void *persistent_communication_with_client(void *arg)
                 response[num_printed] = '\0';
                 // end generating response headers
                 
-                send_response(connfd, writebuff, response, 0) ;
+                send_response(connfd, writebuff, response) ;
                 goto close_connection;
             }
             else{
@@ -299,7 +299,7 @@ void *persistent_communication_with_client(void *arg)
                 response[num_printed] = '\0';
                 // end generating response headers
                 
-                send_response(connfd, writebuff, response, 0); // 0 => don't close the connection yet
+                send_response(connfd, writebuff, response);
 
                 // Sending the body of the request
                 if (send_file(fp, fpath, connfd) < 0)
@@ -559,15 +559,13 @@ int has_requested_file_been_modified_since(char *fname, char* buff){
 
 
 /*
-Sends a response back to the client and conditionally drops the connection. If successfull, return a 1, otherwise 0. 
+Sends a response back to the client and conditionally drops the connection. If successful, return a 1, otherwise 0. 
 */
-int send_response(int connfd, char *writebuff, char *message_to_write, int close_connection){
+int send_response(int connfd, char *writebuff, char *message_to_write){
     printf("===================");
     printf("\n\nSending following response to client:\n%s\n", message_to_write);
     int num_written = write(connfd, message_to_write, strlen((char *)message_to_write));
     printf("===================\n");
-    if(close_connection)
-        close(connfd);
     return 1;
 }
 
