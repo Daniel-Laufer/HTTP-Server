@@ -1,7 +1,5 @@
 
 
-
-
 #include <stdio.h>
 #include <netdb.h>
 #include <netinet/in.h>
@@ -14,13 +12,11 @@
 #include <string.h>
 #include "server_helpers.h"
 #define __USE_XOPEN
-#include <time.h> 
+#include <time.h>
 #include <pthread.h>
-#include <poll.h> 
+#include <poll.h>
 
 /* implementation of the helper functions */
-
-
 
 /**
  * Function responsible for communicating with client
@@ -49,123 +45,115 @@ void non_persistent_communication_with_client(int connfd)
     {
         // hacky way to detect the end of the message.
         printf("%s\n", buff);
+        if (is_http_method_get(buff))
+        {
+            break;
+        }
+        else
+        {
+            perror("unrecognized HTTP method specified in request.");
+            return;
+        }
+
         if (buff[n - 1] == '\n')
             break;
-        
-        fname = extract_fname(buff);
+    }
 
-        // invalid HTTP method provided
-        if(!is_http_method_get(buff)){
-            perror("unrecognized HTTP method specified in request.");
-            
-            return;
-        }
-        
+    fname = extract_fname(buff);
 
-        if (strlen(fname) == 0){
-            free(fname);
-            fname = malloc(sizeof(char) * 11);
-            memcpy(fname, "index.html", 11);
-            fname[10] = '\0';
-        }
-
-        //appending path with fname
-        char *fpath = malloc(sizeof(char) * (website_dir_length + strlen(fname) + 1));
-        memcpy(fpath, website_dir, website_dir_length);
-        memcpy(fpath + website_dir_length, fname, strlen(fname));
-        fpath[website_dir_length + strlen(fname)] = '\0';
+    if (strlen(fname) == 0)
+    {
         free(fname);
-        printf("fpath: %s\n\n", fpath);
-        
+        fname = malloc(sizeof(char) * 11);
+        memcpy(fname, "index.html", 11);
+        fname[10] = '\0';
+    }
 
-            
-        // opening file for reading
-        if (!(fp = fopen(fpath, "rb")))
+    //appending path with fname
+    fpath = malloc(sizeof(char) * (website_dir_length + strlen(fname) + 1));
+    memcpy(fpath, website_dir, website_dir_length);
+    memcpy(fpath + website_dir_length, fname, strlen(fname));
+    fpath[website_dir_length + strlen(fname)] = '\0';
+    free(fname);
+    printf("fpath: %s\n\n", fpath);
+
+    // opening file for reading
+    if (!(fp = fopen(fpath, "rb")))
+    {
+        free(fpath);
+
+        perror("error in reading file");
+        // generating response headers
+        char status_code_header[] = "HTTP/1.0 404 Not Found";
+        char content_type_header[] = "Content-type: text/html";
+        char body[] = "<h1 style='text-align: center;'>File not found</h1>";
+
+        char *http_status_code = "HTTP/1.0 404 Not found";
+
+        strftime(date_header, 32, "Date: %a, %d %b %Y %H:%M:%S", gmtime(&now));
+        date_header[31] = '\0';
+
+        int num_printed = sprintf(response, "%s\r\n%s\r\n\r\n%s", http_status_code, date_header, body);
+        response[num_printed] = '\0';
+        send_response(connfd, writebuff, response);
+        return;
+    }
+
+    // if an If-Modified-Since header is provided then conditionally return a 304 Not Modified status with no body.
+    if (!has_requested_file_been_modified_since(fpath, buff))
+    {
+        free(fpath);
+        // generating response headers
+        char *http_status_code = "HTTP/1.0 304 Not Modified";
+
+        strftime(date_header, 32, "Date: %a, %d %b %Y %H:%M:%S", gmtime(&now));
+        date_header[31] = '\0';
+
+        sprintf(content_length_header, "Content-length: 0");
+
+        int num_printed = sprintf(response, "%s\r\n%s\r\n%s\r\n%s\r\n\r\n", http_status_code, connection_close_header, content_length_header, date_header); // no body sent for 304 response
+        response[num_printed] = '\0';
+        // end generating response headers
+
+        send_response(connfd, writebuff, response);
+        return;
+    }
+    else
+    {
+        // generating response headers
+        char *http_status_code = "HTTP/1.0 200 Success";
+
+        strftime(date_header, 32, "Date: %a, %d %b %Y %H:%M:%S", gmtime(&now));
+        date_header[31] = '\0';
+
+        char content_type_header[30];
+        sprintf(content_type_header, "Content-type: %s", extract_ftype(fpath));
+
+        char content_length_header[MAX];
+
+        file_size = get_file_size(fp);
+        sprintf(content_length_header, "Content-length: %ld", file_size);
+
+        int num_printed = sprintf(response, "%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n\r\n", http_status_code, date_header, content_length_header, connection_close_header, content_type_header);
+        response[num_printed] = '\0';
+        // end generating response headers
+
+        send_response(connfd, writebuff, response);
+
+        // Sending the body of the request
+        if (send_file(fp, fpath, connfd) < 0)
         {
             free(fpath);
-            
-            perror("error in reading file");
-                // generating response headers
-            char status_code_header[] = "HTTP/1.0 404 Not Found";
-            char content_type_header[] = "Content-type: text/html";
-            char body[] = "<h1 style='text-align: center;'>File not found</h1>";
-            
-            char *http_status_code = "HTTP/1.0 404 Not found";
-                
-                strftime(date_header, 32, "Date: %a, %d %b %Y %H:%M:%S", gmtime(&now));
-                date_header[31] = '\0';
-
-            
-
-            int num_printed = sprintf(response, "%s\r\n%s\r\n\r\n%s", http_status_code, date_header, body);
-            response[num_printed] = '\0';
-            send_response(connfd, writebuff, response);
             return;
         }
-
-       
-        // if an If-Modified-Since header is provided then conditionally return a 304 Not Modified status with no body.
-        if(!has_requested_file_been_modified_since(fpath, buff)){
-            free(fpath);
-            // generating response headers
-            char *http_status_code = "HTTP/1.0 304 Not Modified";
-            
-            
-                strftime(date_header, 32, "Date: %a, %d %b %Y %H:%M:%S", gmtime(&now));
-                date_header[31] = '\0';
-                
-
-            sprintf(content_length_header, "Content-length: 0");
-
-            int num_printed = sprintf(response, "%s\r\n%s\r\n%s\r\n%s\r\n\r\n", http_status_code, connection_close_header, content_length_header, date_header); // no body sent for 304 response
-            response[num_printed] = '\0';
-            // end generating response headers
-            
-            send_response(connfd, writebuff, response);
-            return;
-        }
-        else{
-            // generating response headers
-            char *http_status_code = "HTTP/1.0 200 Success";
-                
-            strftime(date_header, 32, "Date: %a, %d %b %Y %H:%M:%S", gmtime(&now));
-            date_header[31] = '\0';
-
-
-
-            char content_type_header[30];
-            sprintf(content_type_header, "Content-type: %s", extract_ftype(fpath));
-            
-            
-            char content_length_header[MAX];
-
-
-            file_size = get_file_size(fp);
-            sprintf(content_length_header, "Content-length: %ld", file_size);
-
-            int num_printed = sprintf(response, "%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n\r\n", http_status_code, date_header, content_length_header, connection_close_header,  content_type_header); 
-            response[num_printed] = '\0';
-                // end generating response headers
-            
-            send_response(connfd, writebuff, response); 
-
-            // Sending the body of the request
-            if (send_file(fp, fpath, connfd) < 0)
-            {
-                free(fpath);
-                return;
-            }
-        }
-
-        free(fpath);
     }
+
+    free(fpath);
 }
-
-
 
 void *persistent_communication_with_client(void *arg)
 {
-    int connfd = *(int *) arg;
+    int connfd = *(int *)arg;
     char *http_method;
     char content_length_header[MAX];
     char date_header[32];
@@ -177,7 +165,7 @@ void *persistent_communication_with_client(void *arg)
     time_t now = time(NULL);
     char *website_dir = "website/";
     int website_dir_length = strlen(website_dir);
-    
+
     FILE *fp;
     char *fname;
     char *fpath;
@@ -185,20 +173,20 @@ void *persistent_communication_with_client(void *arg)
     char writebuff[MAX];
     int n;
 
-    while (1) {
-        
+    while (1)
+    {
 
-        // Wait for input on the connfd socket. 
-        // If there is input after 10 seconds, close the connectrion. 
+        // Wait for input on the connfd socket.
+        // If there is input after 10 seconds, close the connectrion.
 
-        struct pollfd fds; 
-        fds.fd = connfd; 
+        struct pollfd fds;
+        fds.fd = connfd;
         fds.events = POLLIN;
         int ret = poll(&fds, 1, 60000);
-        if (ret == 0) {
+        if (ret == 0)
+        {
             goto close_connection;
         }
-        
 
         // read the message from client and copy it in buffer
         while ((n = read(connfd, buff, MAX - 1)) > 0)
@@ -207,108 +195,102 @@ void *persistent_communication_with_client(void *arg)
             printf("%s\n", buff);
             if (buff[n - 1] == '\n')
                 break;
-            fname = extract_fname(buff);
-
 
             // unsupported HTTP method provided
-            if(!is_http_method_get(buff)){
-                perror("unrecognized HTTP method specified in request.");
-                goto close_connection;
-                
-            }
-
-            if (strlen(fname) == 0){
-               free(fname);
-               fname = malloc(sizeof(char) * 11);
-               memcpy(fname, "index.html", 11);
-                fname[10] = '\0';
-            }
-
-            //appending path with fname
-            char *fpath = malloc(sizeof(char) * (website_dir_length + strlen(fname) + 1));
-            memcpy(fpath, website_dir, website_dir_length);
-            memcpy(fpath + website_dir_length, fname, strlen(fname));
-            fpath[website_dir_length + strlen(fname)] = '\0';
-            free(fname);
-            printf("fpath: %s\n\n", fpath);
-      
-
-            
-            
-            // opening file for reading
-            if (!(fp = fopen(fpath, "rb")))
+            if (is_http_method_get(buff))
             {
-                free(fpath);
-                perror("error in reading file");
-                    // generating response headers
-                char status_code_header[] = "HTTP/1.0 404 Not Found";
-                char content_type_header[] = "Content-type: text/html";
-                char body[] = "<h1 style='text-align: center;'>File not found</h1>";
-                
-                char *http_status_code = "HTTP/1.0 404 Not found";
-                    
-                strftime(date_header, 32, "Date: %a, %d %b %Y %H:%M:%S", gmtime(&now));
-                date_header[31] = '\0';
-
-                
-                int num_printed = sprintf(response, "%s\r\n%s\r\n%s\r\n\r\n%s", http_status_code, connection_close_header ,date_header, body);
-                response[num_printed] = '\0';
-                send_response(connfd, writebuff, response);
-                goto close_connection;
+                break;
             }
-
-            // if an If-Modified-Since header is provided then conditionally return a 304 Not Modified status with no body.
-            if(!has_requested_file_been_modified_since(fpath, buff)){
-                free(fpath);
-                // generating response headers
-                char *http_status_code = "HTTP/1.0 304 Not Modified";
-                
-                strftime(date_header, 32, "Date: %a, %d %b %Y %H:%M:%S", gmtime(&now));
-                date_header[31] = '\0';
-                    
-
-                sprintf(content_length_header, "Content-length: 0");
-
-                int num_printed = sprintf(response, "%s\r\n%s\r\n%s\r\n%s\r\n\r\n", http_status_code, connection_close_header, content_length_header, date_header); // no body sent for 304 response
-                response[num_printed] = '\0';
-                // end generating response headers
-                
-                send_response(connfd, writebuff, response) ;
-                goto close_connection;
+            else
+            {
+                perror("unrecognized HTTP method specified in request.");
+                return;
             }
-            else{
-                // generating response headers
-                char *http_status_code = "HTTP/1.0 200 Success";
-                    
-                strftime(date_header, 32, "Date: %a, %d %b %Y %H:%M:%S", gmtime(&now));
-                date_header[31] = '\0';
+        }
 
+        fname = extract_fname(buff);
 
+        if (strlen(fname) == 0)
+        {
+            free(fname);
+            fname = malloc(sizeof(char) * 11);
+            memcpy(fname, "index.html", 11);
+            fname[10] = '\0';
+        }
 
-                char content_type_header[30];
-                sprintf(content_type_header, "Content-type: %s", extract_ftype(fpath));
-                
-                
-                char content_length_header[MAX];
+        //appending path with fname
+        fpath = malloc(sizeof(char) * (website_dir_length + strlen(fname) + 1));
+        memcpy(fpath, website_dir, website_dir_length);
+        memcpy(fpath + website_dir_length, fname, strlen(fname));
+        fpath[website_dir_length + strlen(fname)] = '\0';
+        free(fname);
+        printf("fpath: %s\n\n", fpath);
 
+        // opening file for reading
+        if (!(fp = fopen(fpath, "rb")))
+        {
+            free(fpath);
+            perror("error in reading file");
+            // generating response headers
+            char status_code_header[] = "HTTP/1.0 404 Not Found";
+            char content_type_header[] = "Content-type: text/html";
+            char body[] = "<h1 style='text-align: center;'>File not found</h1>";
 
-                file_size = get_file_size(fp);
-                sprintf(content_length_header, "Content-length: %ld", file_size);
+            char *http_status_code = "HTTP/1.0 404 Not found";
 
-                int num_printed = sprintf(response, "%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n\r\n", http_status_code, connection_keep_alive_header, connection_timeout_header, date_header, content_length_header, content_type_header); 
-                response[num_printed] = '\0';
-                // end generating response headers
-                
-                send_response(connfd, writebuff, response);
+            strftime(date_header, 32, "Date: %a, %d %b %Y %H:%M:%S", gmtime(&now));
+            date_header[31] = '\0';
 
-                // Sending the body of the request
-                if (send_file(fp, fpath, connfd) < 0)
-                    free(fname);
-                    
-                
-            }
-            
-            
+            int num_printed = sprintf(response, "%s\r\n%s\r\n%s\r\n\r\n%s", http_status_code, connection_close_header, date_header, body);
+            response[num_printed] = '\0';
+            send_response(connfd, writebuff, response);
+            goto close_connection;
+        }
+
+        // if an If-Modified-Since header is provided then conditionally return a 304 Not Modified status with no body.
+        if (!has_requested_file_been_modified_since(fpath, buff))
+        {
+            free(fpath);
+            // generating response headers
+            char *http_status_code = "HTTP/1.0 304 Not Modified";
+
+            strftime(date_header, 32, "Date: %a, %d %b %Y %H:%M:%S", gmtime(&now));
+            date_header[31] = '\0';
+
+            sprintf(content_length_header, "Content-length: 0");
+
+            int num_printed = sprintf(response, "%s\r\n%s\r\n%s\r\n%s\r\n\r\n", http_status_code, connection_close_header, content_length_header, date_header); // no body sent for 304 response
+            response[num_printed] = '\0';
+            // end generating response headers
+
+            send_response(connfd, writebuff, response);
+            goto close_connection;
+        }
+        else
+        {
+            // generating response headers
+            char *http_status_code = "HTTP/1.0 200 Success";
+
+            strftime(date_header, 32, "Date: %a, %d %b %Y %H:%M:%S", gmtime(&now));
+            date_header[31] = '\0';
+
+            char content_type_header[30];
+            sprintf(content_type_header, "Content-type: %s", extract_ftype(fpath));
+
+            char content_length_header[MAX];
+
+            file_size = get_file_size(fp);
+            sprintf(content_length_header, "Content-length: %ld", file_size);
+
+            int num_printed = sprintf(response, "%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n\r\n", http_status_code, connection_keep_alive_header, connection_timeout_header, date_header, content_length_header, content_type_header);
+            response[num_printed] = '\0';
+            // end generating response headers
+
+            send_response(connfd, writebuff, response);
+
+            // Sending the body of the request
+            if (send_file(fp, fpath, connfd) < 0)
+                free(fname);
         }
     }
 
@@ -317,61 +299,49 @@ close_connection:
     pthread_exit(NULL);
 }
 
-
-
-
-
-
 /**
  * Return 1 if the client sent a GET HTTP request, 0 otherwise.
  */
-int is_http_method_get(char *request){
+int is_http_method_get(char *request)
+{
     char request_type[4];
     int num_http_methods = 9;
     memcpy(request_type, &request[0], 3);
     request_type[3] = '\0';
 
-    if ((strncmp(request_type, "GET", 3)) == 0) 
+    if ((strncmp(request_type, "GET", 3)) == 0)
         return 1;
-    
-    
-    return 0; // unsupported HTTP method;
- 
-}
 
+    return 0; // unsupported HTTP method;
+}
 
 /**
  * Returns the value of the If-Modified-Since Header (a date represented by a string)
  */
-struct tm* _extract_modified_since_value(char *request_info)
+struct tm *_extract_modified_since_value(char *request_info)
 {
     char *modified_since_date;
     char date_time_str[25];
     int modified_since_key_length = 17;
     int modified_since_value_length = 25;
 
-
-    for(int i=0; i< MAX - modified_since_key_length; i++){
-        if(strncmp(request_info + i, "If-Modified-Since",  modified_since_key_length) == 0){
-            strncpy(date_time_str, request_info + i + modified_since_key_length + 2, modified_since_value_length); 
-             struct tm *tm = malloc(sizeof(struct tm));
-            char* ret;
-            if((ret = strptime(date_time_str, "%a, %d %b %Y %H:%M:%S", tm)) == NULL){
+    for (int i = 0; i < MAX - modified_since_key_length; i++)
+    {
+        if (strncmp(request_info + i, "If-Modified-Since", modified_since_key_length) == 0)
+        {
+            strncpy(date_time_str, request_info + i + modified_since_key_length + 2, modified_since_value_length);
+            struct tm *tm = malloc(sizeof(struct tm));
+            char *ret;
+            if ((ret = strptime(date_time_str, "%a, %d %b %Y %H:%M:%S", tm)) == NULL)
+            {
                 free(tm);
                 return NULL; // a return of NULL means a conversion failed. Fail silently.
-            } 
+            }
             return tm;
         }
-            
     }
     return NULL;
-    
 }
-
-
-
-
-
 
 /**
  * Returns the the file name given the <request_info>
@@ -401,9 +371,7 @@ char *extract_fname(char *request_info)
     memcpy(fname, &request_info[5], size);
     fname[size] = '\0';
     return fname;
-    
 }
-
 
 /**
  * Returns the content-type value based on the given
@@ -439,19 +407,24 @@ const char *extract_ftype(char *fname)
 /*
 Return the size of this file (number of bytes).
 */
-long get_file_size(FILE *fp){
-   fseek(fp, 0, SEEK_END);
+long get_file_size(FILE *fp)
+{
+    fseek(fp, 0, SEEK_END);
     long size = ftell(fp);
     fseek(fp, 0, SEEK_SET);
     return size;
 }
 
-int min(int a, int b) {
-    if (a > b) 
+/**
+ * Given two integers <a> and <b>, returns
+ * the minimum of the two.
+ */
+int min(int a, int b)
+{
+    if (a > b)
         return b;
     return a;
 }
-
 
 /** 
  * Sends a file given a pointer to that file, with file name <fname> to target socket <tarsocket>.
@@ -460,22 +433,20 @@ int min(int a, int b) {
  */
 int send_file(FILE *fp, char *fname, int tarsocket)
 {
-
     // determining the file's size first
-    fseek(fp, 0, SEEK_END);
-    long bytes_left = ftell(fp);
-    fseek(fp, 0, SEEK_SET);
+    long bytes_left = get_file_size(fp);
     int read_bytes;
     char buff[512];
     int actual_sent = 0;
 
     // while there are no bytes left to be sent
-    while(bytes_left > 0) {
+    while (bytes_left > 0)
+    {
         // reading and sending one byte a time to ensure
         // no data loss occurs
         int min_to_send = min(sizeof(buff), bytes_left);
         read_bytes = fread(buff, sizeof(char), min_to_send, fp);
-        if (read_bytes <= 0)
+        if (read_bytes <= 0 || read_bytes < min_to_send)
         {
             perror("send_file");
             return -1;
@@ -485,46 +456,16 @@ int send_file(FILE *fp, char *fname, int tarsocket)
         bytes_left -= actual_sent;
 
         // not everything was sent
-        if(actual_sent < min_to_send) {
-            // go back one byte to retry sending it
-            fseek(fp, -min_to_send, SEEK_CUR);
+        if (actual_sent < min_to_send)
+        {
+            // go back to retry send
+            fseek(fp, -(min_to_send - actual_sent), SEEK_CUR);
         }
     }
 
     fclose(fp);
     return 0;
-    
-    // SENDING ONE BYTE AT A TIME
-
-    // // determining the file's size first
-    // long bytes_left = get_file_size(fp);
-    // int read_bytes;
-    // char byte;
-       
-
-    // // while there are no bytes left to be sent
-    // while(bytes_left >0) {
-    //     // reading and sending one byte a time to ensure
-    //     // no data loss occurs
-    //     read_bytes = fread(&byte, sizeof(char), 1, fp);
-    //     if (read_bytes <= 0)
-    //     {
-    //         perror("send_file, read");
-    //         return -1;
-    //     }
-
-    //     if(send(tarsocket, &byte, read_bytes, 0) == 0){
-    //         perror("send_file, send");
-    //         return -1;
-    //     }
-    //     bytes_left--;
-    // }
-
-    // fclose(fp);
-    // return 0;
-
 }
-
 
 /*
 Returns 1 if the file with the path <fname> has been modified since
@@ -532,44 +473,38 @@ the date-time specified in the If-Modified-Since Header *or* if the
 If-Modified-Since Header isn't present *or* its value is incorrectly formatted
 (failing silently). 
 */
-int has_requested_file_been_modified_since(char *fname, char* buff){
-    struct tm* if_modified_since_date_time = _extract_modified_since_value(buff);
-    if(if_modified_since_date_time == NULL) return 1;
+int has_requested_file_been_modified_since(char *fname, char *buff)
+{
+    struct tm *if_modified_since_date_time = _extract_modified_since_value(buff);
+    if (if_modified_since_date_time == NULL)
+        return 1;
 
     struct stat attr;
     stat(fname, &attr);
 
     // creating a tm struct for the file's modification time and then convert it to unix time
     struct tm *file_last_modified_date = localtime(&(attr.st_ctime));
-    time_t raw_file_last_modified_date =  mktime(file_last_modified_date);
-    
+    time_t raw_file_last_modified_date = mktime(file_last_modified_date);
+
     // converting if_modified_since_date_time into unix time
     time_t raw_if_modified_since_date_time = mktime(if_modified_since_date_time);
     free(if_modified_since_date_time); // don't need this if_modified_since_date_time tm struct any longer
 
-
     // file HAS been modified since the value of  the If-Modified-Since header
-    if(raw_file_last_modified_date >= raw_if_modified_since_date_time)
+    if (raw_file_last_modified_date >= raw_if_modified_since_date_time)
         return 1;
-
-    
 
     return 0;
 }
 
-
 /*
 Sends a response back to the client and conditionally drops the connection. If successful, return a 1, otherwise 0. 
 */
-int send_response(int connfd, char *writebuff, char *message_to_write){
+int send_response(int connfd, char *writebuff, char *message_to_write)
+{
     printf("===================");
     printf("\n\nSending following response to client:\n%s\n", message_to_write);
     int num_written = write(connfd, message_to_write, strlen((char *)message_to_write));
     printf("===================\n");
     return 1;
 }
-
-
-
-
-
