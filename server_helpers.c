@@ -1,4 +1,7 @@
 
+
+
+
 #include <stdio.h>
 #include <netdb.h>
 #include <netinet/in.h>
@@ -17,6 +20,8 @@
 
 /* implementation of the helper functions */
 
+
+
 /**
  * Function responsible for communicating with client
  */
@@ -24,6 +29,7 @@ void non_persistent_communication_with_client(int connfd)
 {
     FILE *fp;
     char *fname;
+    char *fpath;
     char *http_method;
     char buff[MAX];
     char writebuff[MAX];
@@ -34,6 +40,8 @@ void non_persistent_communication_with_client(int connfd)
     char date_header[32];
     long file_size;
     char response[1000];
+    char *website_dir = "website/";
+    int website_dir_length = strlen(website_dir);
 
     // read the message from client and copy it in buffer
     while ((n = read(connfd, buff, MAX - 1)) > 0)
@@ -57,12 +65,23 @@ void non_persistent_communication_with_client(int connfd)
             free(fname);
             fname = malloc(sizeof(char) * 11);
             memcpy(fname, "index.html", 11);
+            fname[10] = '\0';
         }
+
+        //appending path with fname
+        char *fpath = malloc(sizeof(char) * (website_dir_length + strlen(fname) + 1));
+        memcpy(fpath, website_dir, website_dir_length);
+        memcpy(fpath + website_dir_length, fname, strlen(fname));
+        fpath[website_dir_length + strlen(fname)] = '\0';
+        free(fname);
+        printf("fpath: %s\n\n", fpath);
+        
+
             
         // opening file for reading
-        if (!(fp = fopen(fname, "rb")))
+        if (!(fp = fopen(fpath, "rb")))
         {
-            free(fname);
+            free(fpath);
             
             perror("error in reading file");
                 // generating response headers
@@ -83,9 +102,10 @@ void non_persistent_communication_with_client(int connfd)
             return;
         }
 
+       
         // if an If-Modified-Since header is provided then conditionally return a 304 Not Modified status with no body.
-        if(!has_requested_file_been_modified_since(fname, buff)){
-            free(fname);
+        if(!has_requested_file_been_modified_since(fpath, buff)){
+            free(fpath);
             // generating response headers
             char *http_status_code = "HTTP/1.0 304 Not Modified";
             
@@ -113,7 +133,7 @@ void non_persistent_communication_with_client(int connfd)
 
 
             char content_type_header[30];
-            sprintf(content_type_header, "Content-type: %s", extract_ftype(fname));
+            sprintf(content_type_header, "Content-type: %s", extract_ftype(fpath));
             
             
             char content_length_header[MAX];
@@ -129,14 +149,14 @@ void non_persistent_communication_with_client(int connfd)
             send_response(connfd, writebuff, response, 0); // 0 => don't close the connection yet
 
             // Sending the body of the request
-            if (send_file(fp, fname, connfd) < 0)
+            if (send_file(fp, fpath, connfd) < 0)
             {
-                free(fname);
+                free(fpath);
                 return;
             }
         }
 
-        free(fname);
+        free(fpath);
         close(connfd);
     }
 }
@@ -155,13 +175,18 @@ void *persistent_communication_with_client(void *arg)
     char *connection_keep_alive_header = "Connection: keep-alive";
     char *connection_close_header = "Connection: close";
     time_t now = time(NULL);
+    char *website_dir = "website/";
+    int website_dir_length = strlen(website_dir);
+    
+    FILE *fp;
+    char *fname;
+    char *fpath;
+    char buff[MAX];
+    char writebuff[MAX];
+    int n;
 
     while (1) {
-        FILE *fp;
-        char *fname;
-        char buff[MAX];
-        char writebuff[MAX];
-        int n;
+        
 
         // Wait for input on the connfd socket. 
         // If there is input after 10 seconds, close the connectrion. 
@@ -196,15 +221,24 @@ void *persistent_communication_with_client(void *arg)
                free(fname);
                fname = malloc(sizeof(char) * 11);
                memcpy(fname, "index.html", 11);
+                fname[10] = '\0';
             }
+
+            //appending path with fname
+            char *fpath = malloc(sizeof(char) * (website_dir_length + strlen(fname) + 1));
+            memcpy(fpath, website_dir, website_dir_length);
+            memcpy(fpath + website_dir_length, fname, strlen(fname));
+            fpath[website_dir_length + strlen(fname)] = '\0';
+            free(fname);
+            printf("fpath: %s\n\n", fpath);
       
 
             
             
             // opening file for reading
-            if (!(fp = fopen(fname, "rb")))
+            if (!(fp = fopen(fpath, "rb")))
             {
-                free(fname);
+                free(fpath);
                 perror("error in reading file");
                     // generating response headers
                 char status_code_header[] = "HTTP/1.0 404 Not Found";
@@ -224,8 +258,8 @@ void *persistent_communication_with_client(void *arg)
             }
 
             // if an If-Modified-Since header is provided then conditionally return a 304 Not Modified status with no body.
-            if(!has_requested_file_been_modified_since(fname, buff)){
-                free(fname);
+            if(!has_requested_file_been_modified_since(fpath, buff)){
+                free(fpath);
                 // generating response headers
                 char *http_status_code = "HTTP/1.0 304 Not Modified";
                 
@@ -252,7 +286,7 @@ void *persistent_communication_with_client(void *arg)
 
 
                 char content_type_header[30];
-                sprintf(content_type_header, "Content-type: %s", extract_ftype(fname));
+                sprintf(content_type_header, "Content-type: %s", extract_ftype(fpath));
                 
                 
                 char content_length_header[MAX];
@@ -268,7 +302,7 @@ void *persistent_communication_with_client(void *arg)
                 send_response(connfd, writebuff, response, 0); // 0 => don't close the connection yet
 
                 // Sending the body of the request
-                if (send_file(fp, fname, connfd) < 0)
+                if (send_file(fp, fpath, connfd) < 0)
                     free(fname);
                     
                 
@@ -426,28 +460,69 @@ int min(int a, int b) {
  */
 int send_file(FILE *fp, char *fname, int tarsocket)
 {
+
     // determining the file's size first
-    long bytes_left = get_file_size(fp);
+    fseek(fp, 0, SEEK_END);
+    long bytes_left = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
     int read_bytes;
-    char byte;
+    char buff[512];
+    int actual_sent = 0;
 
     // while there are no bytes left to be sent
-    while(bytes_left >0) {
+    while(bytes_left > 0) {
         // reading and sending one byte a time to ensure
         // no data loss occurs
-        read_bytes = fread(&byte, sizeof(char), 1, fp);
+        int min_to_send = min(sizeof(buff), bytes_left);
+        read_bytes = fread(buff, sizeof(char), min_to_send, fp);
         if (read_bytes <= 0)
         {
             perror("send_file");
             return -1;
         }
 
-        send(tarsocket, &byte, read_bytes, 0);
-        bytes_left--;
+        actual_sent = send(tarsocket, buff, read_bytes, 0);
+        bytes_left -= actual_sent;
+
+        // not everything was sent
+        if(actual_sent < min_to_send) {
+            // go back one byte to retry sending it
+            fseek(fp, -min_to_send, SEEK_CUR);
+        }
     }
 
     fclose(fp);
     return 0;
+    
+    // SENDING ONE BYTE AT A TIME
+
+    // // determining the file's size first
+    // long bytes_left = get_file_size(fp);
+    // int read_bytes;
+    // char byte;
+       
+
+    // // while there are no bytes left to be sent
+    // while(bytes_left >0) {
+    //     // reading and sending one byte a time to ensure
+    //     // no data loss occurs
+    //     read_bytes = fread(&byte, sizeof(char), 1, fp);
+    //     if (read_bytes <= 0)
+    //     {
+    //         perror("send_file, read");
+    //         return -1;
+    //     }
+
+    //     if(send(tarsocket, &byte, read_bytes, 0) == 0){
+    //         perror("send_file, send");
+    //         return -1;
+    //     }
+    //     bytes_left--;
+    // }
+
+    // fclose(fp);
+    // return 0;
+
 }
 
 
@@ -495,6 +570,7 @@ int send_response(int connfd, char *writebuff, char *message_to_write, int close
         close(connfd);
     return 1;
 }
+
 
 
 
