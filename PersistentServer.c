@@ -79,7 +79,9 @@ int main()
     {
         printf("server accept the client... %d\n", connfd);
         if (last_accepted != connfd) {
-            pthread_create(&threads[i], NULL, persistent_communication_with_client, &connfd);
+            int *connfd2 = (int *) malloc(sizeof(int));
+            *connfd2 = connfd;
+            pthread_create(&threads[i], NULL, persistent_communication_with_client, connfd2);
         }
         i++;
 
