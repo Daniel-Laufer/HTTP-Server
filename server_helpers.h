@@ -1,5 +1,5 @@
 
-#define MAX 400
+#define MAX 256
 #define NON_PERSIS_SERVER_PORT 8090
 #define PERSIS_SERVER_PORT 8098
 #define SA struct sockaddr

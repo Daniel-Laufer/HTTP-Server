@@ -17,6 +17,14 @@
 #include <poll.h>
 
 /* implementation of the helper functions */
+void log_to_file(char *message);
+
+void log_to_file(char *message) {
+   FILE *logger = fopen("logfile.txt", "a");
+   fputs(message, logger);
+   fclose(logger);
+}
+
 
 /**
  * Function responsible for communicating with client
@@ -26,7 +34,6 @@ void non_persistent_communication_with_client(int connfd)
     FILE *fp;
     char *fname;
     char *fpath;
-    char *http_method;
     char buff[MAX];
     char writebuff[MAX];
     int n;
@@ -84,8 +91,8 @@ void non_persistent_communication_with_client(int connfd)
 
         perror("error in reading file");
         // generating response headers
-        char status_code_header[] = "HTTP/1.0 404 Not Found";
-        char content_type_header[] = "Content-type: text/html";
+        // char status_code_header[] = "HTTP/1.0 404 Not Found";
+        // char content_type_header[] = "Content-type: text/html";
         char body[] = "<h1 style='text-align: center;'>File not found</h1>";
 
         char *http_status_code = "HTTP/1.0 404 Not found";
@@ -154,7 +161,11 @@ void non_persistent_communication_with_client(int connfd)
 void *persistent_communication_with_client(void *arg)
 {
     int connfd = *(int *)arg;
-    char *http_method;
+
+    char printbuf[200];
+    sprintf(printbuf, "[persistent_communication_with_client] %d enter function\n", connfd);
+    log_to_file(printbuf);
+    
     char content_length_header[MAX];
     char date_header[32];
     long file_size;
@@ -170,11 +181,14 @@ void *persistent_communication_with_client(void *arg)
     char *fname;
     char *fpath;
     char buff[MAX];
+    char buff2[MAX];
     char writebuff[MAX];
     int n;
 
     while (1)
     {
+        sprintf(printbuf, "[persistent_communication_with_client] %d Entering while(1) loop\n", connfd);
+        log_to_file(printbuf);
 
         // Wait for input on the connfd socket.
         // If there is input after 10 seconds, close the connectrion.
@@ -182,33 +196,58 @@ void *persistent_communication_with_client(void *arg)
         struct pollfd fds;
         fds.fd = connfd;
         fds.events = POLLIN;
-        int ret = poll(&fds, 1, 60000);
+        int ret = poll(&fds, 1, 20000);
         if (ret == 0)
         {
+            sprintf(printbuf, "[persistent_communication_with_client] %d closing connection, no values from poll\n", connfd);
+            log_to_file(printbuf);
             goto close_connection;
         }
 
+        sprintf(printbuf, "[persistent_communication_with_client] got through poll %d \n", connfd);
+        log_to_file(printbuf);
+        
         // read the message from client and copy it in buffer
-        while ((n = read(connfd, buff, MAX - 1)) > 0)
+        int check = 0; 
+        while ((n = read(connfd, buff2, MAX - 1)) > 0)
         {
-            // hacky way to detect the end of the message.
-            printf("%s\n", buff);
-            if (buff[n - 1] == '\n')
-                break;
-
             // unsupported HTTP method provided
-            if (is_http_method_get(buff))
+            if (is_http_method_get(buff2))
             {
-                break;
+                
+                fname = extract_fname(buff2);
+                sprintf(printbuf, "[persistent_communication_with_client] Get request is received %d File: %s\n", connfd, fname);
+                log_to_file(printbuf);
+                check = 1; 
+                memcpy(buff, buff2, MAX);
             }
+
             else
             {
-                perror("unrecognized HTTP method specified in request.");
-                return;
+                sprintf(printbuf, "[persistent_communication_with_client] Remaining buff characters received %d\n", connfd);
+                log_to_file(printbuf);
+            }
+
+            // hacky way to detect the end of the message.
+            printf("%s\n", buff2);
+            if (buff2[n - 1] == '\n') {
+                if (check == 0) {
+                    sprintf(printbuf, "I Reached the end but didn't find a file %d\n", connfd);
+                    log_to_file(printbuf);
+                    log_to_file(buff2);
+                    goto close_connection;
+                }
+                break;
             }
         }
 
-        fname = extract_fname(buff);
+        sprintf(printbuf, "[persistent_communication_with_client] finished first while loop %d\n", connfd);
+        log_to_file(printbuf);
+
+        if (fname == NULL) {
+            log_to_file("fname was null... exiting");
+            goto close_connection;
+        }
 
         if (strlen(fname) == 0)
         {
@@ -223,17 +262,14 @@ void *persistent_communication_with_client(void *arg)
         memcpy(fpath, website_dir, website_dir_length);
         memcpy(fpath + website_dir_length, fname, strlen(fname));
         fpath[website_dir_length + strlen(fname)] = '\0';
-        free(fname);
         printf("fpath: %s\n\n", fpath);
 
         // opening file for reading
         if (!(fp = fopen(fpath, "rb")))
         {
-            free(fpath);
+            // free(fpath);
             perror("error in reading file");
             // generating response headers
-            char status_code_header[] = "HTTP/1.0 404 Not Found";
-            char content_type_header[] = "Content-type: text/html";
             char body[] = "<h1 style='text-align: center;'>File not found</h1>";
 
             char *http_status_code = "HTTP/1.0 404 Not found";
@@ -250,7 +286,6 @@ void *persistent_communication_with_client(void *arg)
         // if an If-Modified-Since header is provided then conditionally return a 304 Not Modified status with no body.
         if (!has_requested_file_been_modified_since(fpath, buff))
         {
-            free(fpath);
             // generating response headers
             char *http_status_code = "HTTP/1.0 304 Not Modified";
 
@@ -289,12 +324,17 @@ void *persistent_communication_with_client(void *arg)
             send_response(connfd, writebuff, response);
 
             // Sending the body of the request
-            if (send_file(fp, fpath, connfd) < 0)
-                free(fname);
+            if (send_file(fp, fpath, connfd) < 0) {
+
+            }
+                // free(fname);
         }
+    
     }
 
 close_connection:
+    // free(fpath);
+    // free(fname);
     close(connfd);
     pthread_exit(NULL);
 }
@@ -305,7 +345,6 @@ close_connection:
 int is_http_method_get(char *request)
 {
     char request_type[4];
-    int num_http_methods = 9;
     memcpy(request_type, &request[0], 3);
     request_type[3] = '\0';
 
@@ -320,7 +359,6 @@ int is_http_method_get(char *request)
  */
 struct tm *_extract_modified_since_value(char *request_info)
 {
-    char *modified_since_date;
     char date_time_str[25];
     int modified_since_key_length = 17;
     int modified_since_value_length = 25;
@@ -504,7 +542,7 @@ int send_response(int connfd, char *writebuff, char *message_to_write)
 {
     printf("===================");
     printf("\n\nSending following response to client:\n%s\n", message_to_write);
-    int num_written = write(connfd, message_to_write, strlen((char *)message_to_write));
+    write(connfd, message_to_write, strlen((char *)message_to_write));
     printf("===================\n");
     return 1;
 }
