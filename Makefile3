@@ -1,6 +1,6 @@
 FLAGS= -Wall -g -pthread
-OBJ = PipelinedServer.o pipelined_helpers.o
-DEPENDENCIES = pipelined_helpers.h
+OBJ = PersistentServer.o server_helpers.o
+DEPENDENCIES = server_helpers.h
 
 all : servers
 
@@ -12,5 +12,5 @@ servers : ${OBJ}
 
 clean:
 	rm -f *.o servers
-	rm -f logfile.txt
+	rm logfile.txt
 
