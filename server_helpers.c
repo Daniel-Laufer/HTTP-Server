@@ -73,6 +73,7 @@ void non_persistent_communication_with_client(int connfd)
         }
     }
 
+
     if (fname == NULL)
     {
         free(fname);
@@ -94,7 +95,6 @@ void non_persistent_communication_with_client(int connfd)
     memcpy(fpath + website_dir_length, fname, strlen(fname));
     fpath[website_dir_length + strlen(fname)] = '\0';
     // free(fname);
-    printf("fpath: %s\n\n", fpath);
 
     // opening file for reading
     if (!(fp = fopen(fpath, "rb")))
@@ -134,8 +134,8 @@ void non_persistent_communication_with_client(int connfd)
         int num_printed = sprintf(response, "%s\r\n%s\r\n%s\r\n%s\r\n\r\n", http_status_code, connection_close_header, content_length_header, date_header); // no body sent for 304 response
         response[num_printed] = '\0';
         // end generating response headers
-
         send_response(connfd, writebuff, response);
+        close(connfd);
         return;
     }
     else
@@ -159,13 +159,13 @@ void non_persistent_communication_with_client(int connfd)
         // end generating response headers
 
         send_response(connfd, writebuff, response);
-
         // Sending the body of the request
         if (send_file(fp, fpath, connfd) < 0)
         {
             free(fpath);
             return;
         }
+         close(connfd);
     }
 
     free(fpath);
@@ -278,14 +278,13 @@ void *persistent_communication_with_client(void *arg)
         memcpy(fpath, website_dir, website_dir_length);
         memcpy(fpath + website_dir_length, fname, strlen(fname));
         fpath[website_dir_length + strlen(fname)] = '\0';
+        printf("%s\n", fpath);
 
         if (fpath[strlen(fpath) - 1] == '/')
         {
             /* TODO: restrict users from entering paths such as localhost:8090/assets/ */
         }
 
-        printf("fname: %s\n\n", fname);
-        printf("fpath: %s\n\n", fpath);
 
         // opening file for reading
         if (!(fp = fopen(fpath, "rb")))
@@ -347,10 +346,14 @@ void *persistent_communication_with_client(void *arg)
             send_response(connfd, writebuff, response);
 
             // Sending the body of the request
+
             if (send_file(fp, fpath, connfd) < 0)
             {
+                
             }
+    
             // free(fname);
+ 
         }
     }
 
@@ -560,8 +563,9 @@ Sends a response back to the client and conditionally drops the connection. If s
 int send_response(int connfd, char *writebuff, char *message_to_write)
 {
     printf("===================");
-    printf("\n\nSending following response to client:\n%s\n", message_to_write);
+    printf("\n\nSending following response to client:\n%s", message_to_write);
     write(connfd, message_to_write, strlen((char *)message_to_write));
+    
     printf("===================\n");
     return 1;
 }
