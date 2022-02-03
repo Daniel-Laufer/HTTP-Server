@@ -13,7 +13,7 @@ HOST = f"{SERVER_IP}:{SERVER_PORT}"
 
 
 def test_get_html() -> None:
-    request = "GET / HTTP/1.1\r\nHost: localhost:8080\r\nConnection: keep-alive\r\n\r\n"
+    request = f"GET / HTTP/1.1\r\nHost: {HOST}\r\nConnection: keep-alive\r\n\r\n"
     client = create_client(SERVER_IP, SERVER_PORT)
     client.send(request.encode())
     res_headers, body = _parse_response(_read_response(client))
@@ -34,7 +34,7 @@ def test_get_html() -> None:
 
 
 def test_get_css() -> None:
-    request = "GET /assets/index.css HTTP/1.1\r\nHost: localhost:8080\r\nConnection: keep-alive\r\n\r\n"
+    request = f"GET /assets/index.css HTTP/1.1\r\nHost: {HOST}\r\nConnection: keep-alive\r\n\r\n"
     client = create_client(SERVER_IP, SERVER_PORT)
     client.send(request.encode())
     res_headers, body = _parse_response(_read_response(client))
@@ -56,7 +56,7 @@ def test_get_css() -> None:
 
 def test_getting_304_response() -> None:
     date = "Wed, 19 Nov 2025 09:23:50"
-    request = f"GET / HTTP/1.1\r\nHost: localhost:8080\r\nIf-Modified-Since: {date}\r\nConnection: keep-alive\r\n\r\n"
+    request = f"GET / HTTP/1.1\r\nHost: {HOST}\r\nIf-Modified-Since: {date}\r\nConnection: keep-alive\r\n\r\n"
     client = create_client(SERVER_IP, SERVER_PORT)
     client.send(request.encode())
     res_headers, body = _parse_response(_read_response(client))
@@ -70,7 +70,7 @@ def test_getting_304_response() -> None:
 
 def test_not_getting_304_response() -> None:
     date = "Wed, 19 Nov 2021 09:23:50"
-    request = f"GET / HTTP/1.1\r\nHost: localhost:8080\r\nIf-Modified-Since: {date}\r\nConnection: keep-alive\r\n\r\n"
+    request = f"GET / HTTP/1.1\r\nHost: {HOST}\r\nIf-Modified-Since: {date}\r\nConnection: keep-alive\r\n\r\n"
     client = create_client(SERVER_IP, SERVER_PORT)
     client.send(request.encode())
     res_headers, body = _parse_response(_read_response(client))
