@@ -51,7 +51,6 @@ def test_get_css() -> None:
         file_contents = file.read()
         file_contents = file_contents.replace("\n", "\r\n")
         assert file_contents == body
-    client.close()
 
 
 def test_getting_304_response() -> None:
@@ -94,7 +93,12 @@ def _read_response(client: socket.socket) -> str:
     """
     res_chunks = []
     while True:
-        chunk = client.recv(256)
+        try:
+            chunk = client.recv(256)
+        # catching timeout exception
+        except Exception as e:
+            break
+
         if not chunk:
             break
         res_chunks.append(chunk.decode())
@@ -119,3 +123,7 @@ def _parse_response(response: str) -> Tuple[List[str], str]:
     res_headers_split = res_headers.split("\r\n")
 
     return res_headers_split, res_body
+
+
+if __name__ == "__main__":
+    test_get_css()

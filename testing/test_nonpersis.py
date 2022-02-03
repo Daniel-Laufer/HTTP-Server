@@ -94,7 +94,11 @@ def _read_response(client: socket.socket) -> str:
     """
     res_chunks = []
     while True:
-        chunk = client.recv(256)
+        try:
+            chunk = client.recv(256)
+        # catching timeout exception
+        except Exception as e:
+            break
         if not chunk:
             break
         res_chunks.append(chunk.decode())

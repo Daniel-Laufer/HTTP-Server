@@ -11,7 +11,7 @@ def create_client(serverIp: str, serverPort: int) -> Optional[socket]:
     otherwise return None.
     """
     clientSocket = socket(AF_INET, SOCK_STREAM)
-    clientSocket.settimeout(5)
+    clientSocket.settimeout(1)
 
     try:
         clientSocket.connect((serverIp, serverPort))
