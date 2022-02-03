@@ -19,28 +19,27 @@
 #define MAX_FNAME 100
 #define MAX_RESPONSE 1000
 
-
-struct arg_struct {
+struct arg_struct
+{
     int connfd;
     char buff[MAX];
     char fname[MAX_FNAME];
 };
 
-
 /* implementation of the helper functions */
 void log_to_file(char *message);
 
-void log_to_file(char *message) {
-   FILE *logger = fopen("logfile.txt", "a");
-   fputs(message, logger);
-   fclose(logger);
+void log_to_file(char *message)
+{
+    FILE *logger = fopen("logfile.txt", "a");
+    fputs(message, logger);
+    fclose(logger);
 }
-
 
 void *pipelined_communication_with_client(void *arg)
 {
     int connfd = *(int *)arg;
-    
+
     char fname[MAX_FNAME];
     char buff[MAX];
     char buff2[MAX];
@@ -59,22 +58,24 @@ void *pipelined_communication_with_client(void *arg)
         {
             goto close_connection;
         }
-        
+
         // read the message from client and copy it in buffer
-        int check = 0; 
+        int check = 0;
         while ((n = read(connfd, buff2, MAX - 1)) > 0)
         {
             if (is_http_method_get(buff2))
             {
                 strcpy(fname, extract_fname(buff2));
-                check = 1; 
+                check = 1;
                 memcpy(buff, buff2, MAX);
             }
 
             // hacky way to detect the end of the message.
             printf("%s\n", buff2);
-            if (buff2[n - 1] == '\n') {
-                if (check == 0) {
+            if (buff2[n - 1] == '\n')
+            {
+                if (check == 0)
+                {
                     goto close_connection;
                 }
                 break;
@@ -86,7 +87,7 @@ void *pipelined_communication_with_client(void *arg)
         args.connfd = connfd;
         strncpy(args.fname, fname, MAX_FNAME);
         strncpy(args.buff, buff, MAX);
-        pthread_create(&thread, NULL, handle_request, &args);   
+        pthread_create(&thread, NULL, handle_request, &args);
     }
 
 close_connection:
@@ -94,18 +95,19 @@ close_connection:
     pthread_exit(NULL);
 }
 
-void *handle_request(void *arg) {
-    struct arg_struct args = *(struct arg_struct *) arg;
-    
+void *handle_request(void *arg)
+{
+    struct arg_struct args = *(struct arg_struct *)arg;
+
     int connfd = args.connfd;
     char buff[MAX];
-    char *fname = (char *) malloc(MAX_FNAME);
+    char *fname = (char *)malloc(MAX_FNAME);
     strcpy(buff, args.buff);
     strcpy(fname, args.fname);
 
-    // Variable Definitions 
+    // Variable Definitions
     char content_length_header[MAX];
-    char *fpath; 
+    char *fpath;
     char writebuff[MAX];
     char date_header[32];
     long file_size;
@@ -119,7 +121,8 @@ void *handle_request(void *arg) {
 
     FILE *fp;
 
-    if (fname == NULL) {
+    if (fname == NULL)
+    {
         goto end_request;
     }
 
@@ -192,7 +195,6 @@ end_request:
     pthread_exit(NULL);
 }
 
-
 /**
  * Return 1 if the client sent a GET HTTP request, 0 otherwise.
  */
@@ -248,16 +250,13 @@ char *extract_fname(char *request_info)
     // loop until we reach " HTTP"
     while (1)
     {
-        // as soon as we get to HTTP/ we know we finished parsing the filename
-        if (request_info[i + 1] == '/')
+        // as soon as we get to a whitespace we know we finished parsing the filename
+        if (request_info[i + 1] == ' ')
             break;
 
         i++;
         size++;
     }
-
-    // subtracting " HTTP" from file name
-    size -= 5;
 
     char *fname = malloc(sizeof(char) * (size + 1));
     memcpy(fname, &request_info[5], size);

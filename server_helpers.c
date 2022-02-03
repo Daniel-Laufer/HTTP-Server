@@ -19,12 +19,12 @@
 /* implementation of the helper functions */
 void log_to_file(char *message);
 
-void log_to_file(char *message) {
-   FILE *logger = fopen("logfile.txt", "a");
-   fputs(message, logger);
-   fclose(logger);
+void log_to_file(char *message)
+{
+    FILE *logger = fopen("logfile.txt", "a");
+    fputs(message, logger);
+    fclose(logger);
 }
-
 
 /**
  * Function responsible for communicating with client
@@ -35,6 +35,7 @@ void non_persistent_communication_with_client(int connfd)
     char *fname;
     char *fpath;
     char buff[MAX];
+    char buff2[MAX];
     char writebuff[MAX];
     int n;
     bzero(buff, MAX);
@@ -47,26 +48,37 @@ void non_persistent_communication_with_client(int connfd)
     int website_dir_length = strlen(website_dir);
     char *connection_close_header = "Connection: close";
 
+    int check = 0;
     // read the message from client and copy it in buffer
-    while ((n = read(connfd, buff, MAX - 1)) > 0)
+    while ((n = read(connfd, buff2, MAX - 1)) > 0)
     {
         // hacky way to detect the end of the message.
         printf("%s\n", buff);
-        if (is_http_method_get(buff))
+        if (is_http_method_get(buff2))
         {
-            break;
-        }
-        else
-        {
-            perror("unrecognized HTTP method specified in request.");
-            return;
+            fname = extract_fname(buff2);
+            check = 1;
+            memcpy(buff, buff2, MAX);
         }
 
-        if (buff[n - 1] == '\n')
+        if (buff2[n - 1] == '\n')
+        {
+            // not GET request was found yet end of request was reached
+            if (check == 0)
+            {
+                close(connfd);
+                return;
+            }
             break;
+        }
     }
 
-    fname = extract_fname(buff);
+    if (fname == NULL)
+    {
+        free(fname);
+        close(connfd);
+        return;
+    }
 
     if (strlen(fname) == 0)
     {
@@ -81,7 +93,7 @@ void non_persistent_communication_with_client(int connfd)
     memcpy(fpath, website_dir, website_dir_length);
     memcpy(fpath + website_dir_length, fname, strlen(fname));
     fpath[website_dir_length + strlen(fname)] = '\0';
-    free(fname);
+    // free(fname);
     printf("fpath: %s\n\n", fpath);
 
     // opening file for reading
@@ -103,6 +115,7 @@ void non_persistent_communication_with_client(int connfd)
         int num_printed = sprintf(response, "%s\r\n%s\r\n\r\n%s", http_status_code, date_header, body);
         response[num_printed] = '\0';
         send_response(connfd, writebuff, response);
+        close(connfd);
         return;
     }
 
@@ -165,7 +178,7 @@ void *persistent_communication_with_client(void *arg)
     char printbuf[200];
     sprintf(printbuf, "[persistent_communication_with_client] %d enter function\n", connfd);
     log_to_file(printbuf);
-    
+
     char content_length_header[MAX];
     char date_header[32];
     long file_size;
@@ -206,19 +219,19 @@ void *persistent_communication_with_client(void *arg)
 
         sprintf(printbuf, "[persistent_communication_with_client] got through poll %d \n", connfd);
         log_to_file(printbuf);
-        
+
         // read the message from client and copy it in buffer
-        int check = 0; 
+        int check = 0;
         while ((n = read(connfd, buff2, MAX - 1)) > 0)
         {
             // unsupported HTTP method provided
             if (is_http_method_get(buff2))
             {
-                
+
                 fname = extract_fname(buff2);
                 sprintf(printbuf, "[persistent_communication_with_client] Get request is received %d File: %s\n", connfd, fname);
                 log_to_file(printbuf);
-                check = 1; 
+                check = 1;
                 memcpy(buff, buff2, MAX);
             }
 
@@ -230,8 +243,10 @@ void *persistent_communication_with_client(void *arg)
 
             // hacky way to detect the end of the message.
             printf("%s\n", buff2);
-            if (buff2[n - 1] == '\n') {
-                if (check == 0) {
+            if (buff2[n - 1] == '\n')
+            {
+                if (check == 0)
+                {
                     sprintf(printbuf, "I Reached the end but didn't find a file %d\n", connfd);
                     log_to_file(printbuf);
                     log_to_file(buff2);
@@ -244,7 +259,8 @@ void *persistent_communication_with_client(void *arg)
         sprintf(printbuf, "[persistent_communication_with_client] finished first while loop %d\n", connfd);
         log_to_file(printbuf);
 
-        if (fname == NULL) {
+        if (fname == NULL)
+        {
             log_to_file("fname was null... exiting");
             goto close_connection;
         }
@@ -262,6 +278,13 @@ void *persistent_communication_with_client(void *arg)
         memcpy(fpath, website_dir, website_dir_length);
         memcpy(fpath + website_dir_length, fname, strlen(fname));
         fpath[website_dir_length + strlen(fname)] = '\0';
+
+        if (fpath[strlen(fpath) - 1] == '/')
+        {
+            /* TODO: restrict users from entering paths such as localhost:8090/assets/ */
+        }
+
+        printf("fname: %s\n\n", fname);
         printf("fpath: %s\n\n", fpath);
 
         // opening file for reading
@@ -324,12 +347,11 @@ void *persistent_communication_with_client(void *arg)
             send_response(connfd, writebuff, response);
 
             // Sending the body of the request
-            if (send_file(fp, fpath, connfd) < 0) {
-
+            if (send_file(fp, fpath, connfd) < 0)
+            {
             }
-                // free(fname);
+            // free(fname);
         }
-    
     }
 
 close_connection:
@@ -394,16 +416,13 @@ char *extract_fname(char *request_info)
     // loop until we reach " HTTP"
     while (1)
     {
-        // as soon as we get to HTTP/ we know we finished parsing the filename
-        if (request_info[i + 1] == '/')
+        // as soon as we get to a whitespace we know we finished parsing the filename
+        if (request_info[i + 1] == ' ')
             break;
 
         i++;
         size++;
     }
-
-    // subtracting " HTTP" from file name
-    size -= 5;
 
     char *fname = malloc(sizeof(char) * (size + 1));
     memcpy(fname, &request_info[5], size);
