@@ -1,5 +1,5 @@
 FLAGS= -Wall -g -pthread
-DEPENDENCIES = server_helpers.h pipelined_helpers.h
+DEPENDENCIES = server_helpers.h
 
 all : reg_server persistent_server pipelined_server
  
@@ -9,7 +9,7 @@ reg_server : server.o server_helpers.o
 persistent_server : PersistentServer.o server_helpers.o
 	gcc ${FLAGS} -o $@ $^
 
-pipelined_server : PipelinedServer.o server_helpers.o pipelined_helpers.o
+pipelined_server : PipelinedServer.o server_helpers.o
 	gcc ${FLAGS} -o $@ $^
 
 %.o : %.c ${DEPENDENCIES}

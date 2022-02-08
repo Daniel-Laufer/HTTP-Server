@@ -17,7 +17,6 @@
 #include <poll.h>
 
 /* implementation of the helper functions */
-void log_to_file(char *message);
 
 void log_to_file(char *message)
 {

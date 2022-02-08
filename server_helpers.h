@@ -69,3 +69,8 @@ struct tm* _extract_modified_since_value(char *request_info);
 Sends a response back to the client and conditionally drops the connection. If successfull, return a 1, otherwise 0. 
 */
 int send_response(int connfd, char *writebuff, char *message_to_write);
+
+/*
+Log file information to a file. 
+*/
+void log_to_file(char *message);
