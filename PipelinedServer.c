@@ -18,7 +18,7 @@
 #define MAX_RESPONSE 1000
 #define MAX 256
 #define PIPELINED_SERVER_PORT 8099
-#define MAX_CONNECTIONS 5
+#define MAX_CONNECTIONS 100
 
 
 struct arg_struct

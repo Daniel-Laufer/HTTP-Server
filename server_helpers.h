@@ -3,19 +3,8 @@
 #define NON_PERSIS_SERVER_PORT 8080
 #define PERSIS_SERVER_PORT 8098
 #define SA struct sockaddr
-#define MAX_CONNECTIONS 5
+#define MAX_CONNECTIONS 100
 
-
-/*
-Responsible for communicating with client through a non-persistent HTTP connection
-*/
-void non_persistent_communication_with_client(int connfd);
-
-
-/*
-Responsible for communicating with client through a persistent HTTP connection
-*/
-void *persistent_communication_with_client(void *connfd);
 
 
 /*
