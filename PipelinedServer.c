@@ -19,8 +19,6 @@
 // Driver function
 int main()
 {
-    int last_accepted = 0; 
-
     int listenfd, connfd;
     pthread_t threads[NUM_THREADS];
     
@@ -77,18 +75,19 @@ int main()
     while ((connfd = accept(listenfd, (SA *)NULL, NULL)) >= 0)
     {
         printf("server accept the client... %d\n", connfd);
-        if (last_accepted != connfd) {
-            int *connfd2 = (int *) malloc(sizeof(int));
-            *connfd2 = connfd;
-            pthread_create(&threads[i], NULL, pipelined_communication_with_client, connfd2);
+        printf("Creating a thread\n");
+        int *connfd2 = (int *) malloc(sizeof(int));
+        *connfd2 = connfd;
+        int ret = pthread_create(&threads[i], NULL, pipelined_communication_with_client, connfd2);
+        if (ret == -1) {
+            printf("Connection limit exceeded\n");
+            break; 
         }
         i++;
 
         if (i == NUM_THREADS) {
             i = 0;
         }
-    
-        last_accepted = connfd; 
     }
 
     if (connfd < 0)

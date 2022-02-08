@@ -1,5 +1,3 @@
-
-
 #include <stdio.h>
 #include <netdb.h>
 #include <netinet/in.h>
@@ -22,9 +20,14 @@
 struct arg_struct
 {
     int connfd;
+    int priority;
     char buff[MAX];
     char fname[MAX_FNAME];
 };
+
+pthread_mutex_t response_mutex;
+pthread_cond_t sending_cv;  
+int turn = 1; 
 
 /* implementation of the helper functions */
 void log_to_file(char *message);
@@ -38,12 +41,14 @@ void log_to_file(char *message)
 
 void *pipelined_communication_with_client(void *arg)
 {
+    log_to_file("Starting pipelined communication\n");
     int connfd = *(int *)arg;
 
     char fname[MAX_FNAME];
     char buff[MAX];
     char buff2[MAX];
     int n;
+    int priority = 1; 
 
     while (1)
     {
@@ -85,9 +90,11 @@ void *pipelined_communication_with_client(void *arg)
         // Create a thread to handle the request
         struct arg_struct args;
         args.connfd = connfd;
+        args.priority = priority;
         strncpy(args.fname, fname, MAX_FNAME);
         strncpy(args.buff, buff, MAX);
         pthread_create(&thread, NULL, handle_request, &args);
+        priority++;
     }
 
 close_connection:
@@ -97,13 +104,19 @@ close_connection:
 
 void *handle_request(void *arg)
 {
+    // Parsing arguments 
     struct arg_struct args = *(struct arg_struct *)arg;
-
     int connfd = args.connfd;
+    int priority = args.priority; 
+
+
     char buff[MAX];
     char *fname = (char *)malloc(MAX_FNAME);
     strcpy(buff, args.buff);
     strcpy(fname, args.fname);
+
+    log_to_file("Enter handle_Request, filename is: ");
+    log_to_file(fname);
 
     // Variable Definitions
     char content_length_header[MAX];
@@ -128,14 +141,13 @@ void *handle_request(void *arg)
 
     if (strlen(fname) == 0)
     {
-        free(fname);
-        fname = malloc(sizeof(char) * 11);
-        memcpy(fname, "index.html", 11);
+        log_to_file("Length of filename detected to be 0\n");
+        strcpy(fname, "index.html");
         fname[10] = '\0';
     }
 
     //appending path with fname
-    fpath = malloc(sizeof(char) * (website_dir_length + strlen(fname) + 1));
+    fpath = malloc(website_dir_length + strlen(fname) + 1);
     memcpy(fpath, website_dir, website_dir_length);
     memcpy(fpath + website_dir_length, fname, strlen(fname));
     fpath[website_dir_length + strlen(fname)] = '\0';
@@ -186,9 +198,17 @@ void *handle_request(void *arg)
 
         int num_printed = sprintf(response, "%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n\r\n", http_status_code, connection_keep_alive_header, connection_timeout_header, date_header, content_length_header, content_type_header);
         response[num_printed] = '\0';
-
+        
+        pthread_mutex_lock(&response_mutex);
+        while (priority != turn) {
+            pthread_cond_broadcast(&sending_cv);
+            pthread_cond_wait(&sending_cv, &response_mutex);
+        }
         send_response(connfd, writebuff, response);
         send_file(fp, fpath, connfd);
+        turn++; 
+        pthread_cond_broadcast(&sending_cv);
+        pthread_mutex_unlock(&response_mutex);
     }
 
 end_request:
