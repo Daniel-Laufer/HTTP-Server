@@ -160,12 +160,13 @@ void *persistent_communication_with_client(void *arg)
 
         // read the message from client and copy it in buffer
         int check = 0;
+        int total_read = 0;
         while ((n = read(connfd, buff2, MAX - 1)) > 0)
         {
+            total_read += n; 
             // unsupported HTTP method provided
             if (is_http_method_get(buff2))
             {
-
                 fname = extract_fname(buff2);
                 sprintf(printbuf, "[persistent_communication_with_client] Get request is received %d File: %s\n", connfd, fname);
                 log_to_file(printbuf);
@@ -192,6 +193,9 @@ void *persistent_communication_with_client(void *arg)
                 }
                 break;
             }
+        }
+        if (total_read == 0) {
+            goto close_connection;
         }
 
         sprintf(printbuf, "[persistent_communication_with_client] finished first while loop %d\n", connfd);
