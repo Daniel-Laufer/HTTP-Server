@@ -287,7 +287,7 @@ void *persistent_communication_with_client(void *arg)
 
             if (send_file(fp, fpath, connfd) < 0)
             {
-                
+                goto close_connection; 
             }
     
             // free(fname);

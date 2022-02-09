@@ -15,6 +15,7 @@
 #include <time.h>
 #include <pthread.h>
 #include <poll.h>
+#include <signal.h>
 
 /* implementation of the helper functions */
 
@@ -24,6 +25,13 @@ void log_to_file(char *message)
     fputs(message, logger);
     fclose(logger);
 }
+
+
+// do nothing if the client disconnects 
+void sig_handler(int signum){
+    printf("SIGPIPE, Client disconnected\n");
+}
+
 
 
 /**
@@ -155,6 +163,7 @@ int min(int a, int b)
  */
 int send_file(FILE *fp, char *fname, int tarsocket)
 {
+    signal(SIGPIPE,sig_handler);
     // determining the file's size first
     long bytes_left = get_file_size(fp);
     int read_bytes;
@@ -175,6 +184,10 @@ int send_file(FILE *fp, char *fname, int tarsocket)
         }
 
         actual_sent = send(tarsocket, buff, read_bytes, 0);
+        if (actual_sent == -1) {
+            fclose(fp);
+            return -1;
+        }
         bytes_left -= actual_sent;
 
         // not everything was sent
