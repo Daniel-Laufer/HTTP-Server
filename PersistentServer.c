@@ -7,33 +7,61 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
-#include <poll.h> 
+#include <poll.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <pthread.h>
 #include "server_helpers.h"
+#include <errno.h>
 #include <time.h>
 
-
 #define NUM_THREADS 20
+
+struct thread_args
+{
+    char *root_path;
+    int connfd;
+};
 
 /*
 Responsible for communicating with client through a persistent HTTP connection
 */
-void *persistent_communication_with_client(void *connfd);
-
+void *persistent_communication_with_client(void *args);
 
 // Driver function
-int main()
+int main(int argc, char *argv[])
 {
-    int last_accepted = 0; 
+    int last_accepted = 0;
 
     int listenfd, connfd;
+    char *ptr;
+    int16_t server_port;
+    char *root_path;
+    errno = 0;
     pthread_t threads[NUM_THREADS];
-    
 
     // specifies a transport address and port for the AF_INET address family
     struct sockaddr_in servaddr;
+
+    if (argc != 3)
+    {
+        printf("Usage: ./persistent_server <port> <root_path>\n");
+        exit(0);
+    }
+    else
+    {
+        server_port = strtol(argv[1], &ptr, 10);
+        root_path = argv[2];
+
+        // if an invalid port or root_path was passed
+        if (errno != 0)
+        {
+            perror("strtol");
+            exit(0);
+        }
+    }
+
+    // building thread aregument struct
 
     // creating a socket over domain: AF_INET (IPv4 protocol), SOCK_STREAM: TCP, protocol: 0 = IP
     listenfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -46,20 +74,15 @@ int main()
 
     // fixing the socket bind failed issue
     int yes = 1;
-    if((setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int))) == -1) 
+    if ((setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int))) == -1)
         perror("setsockopt");
-    
 
     bzero(&servaddr, sizeof(servaddr));
 
-    // assign IP, PERSIS_SERVER_PORT
+    // setting up the connection
     servaddr.sin_family = AF_INET;
-
-    // binding the socket to any possible IP address
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-
-    // setting up the port the server socket will be listening to
-    servaddr.sin_port = htons(PERSIS_SERVER_PORT);
+    servaddr.sin_port = htons(server_port);
 
     // binding newly created socket to the given IP address and port
     if ((bind(listenfd, (SA *)&servaddr, sizeof(servaddr))) != 0)
@@ -79,23 +102,27 @@ int main()
     // flush whatever is in the stdout buffer
     fflush(stdout);
 
+    struct thread_args *persis_thread_args = malloc(sizeof(struct thread_args));
+    persis_thread_args->root_path = root_path;
+
     // Accept the data packet from client and verification
-    int i = 0; 
+    int i = 0;
     while ((connfd = accept(listenfd, (SA *)NULL, NULL)) >= 0)
     {
         printf("server accept the client... %d\n", connfd);
-        if (last_accepted != connfd) {
-            int *connfd2 = (int *) malloc(sizeof(int));
-            *connfd2 = connfd;
-            pthread_create(&threads[i], NULL, persistent_communication_with_client, connfd2);
+        if (last_accepted != connfd)
+        {
+            // int *connfd2 = (int *)malloc(sizeof(int));
+            // *connfd2 = connfd;
+            persis_thread_args->connfd = connfd;
+            pthread_create(&threads[i], NULL, persistent_communication_with_client, persis_thread_args);
         }
         i++;
 
-        if (i == NUM_THREADS) {
+        if (i == NUM_THREADS)
             i = 0;
-        }
-    
-        last_accepted = connfd; 
+
+        last_accepted = connfd;
     }
 
     if (connfd < 0)
@@ -105,79 +132,55 @@ int main()
     }
 
     // After chatting close the socket
+    free(persis_thread_args);
     close(listenfd);
 }
 
-
-void *persistent_communication_with_client(void *arg)
+void *persistent_communication_with_client(void *args)
 {
-    int connfd = *(int *)arg;
+    // extracting args passed
+    struct thread_args *persis_thread_args = args;
+    int connfd = persis_thread_args->connfd;
+    char *root_path = persis_thread_args->root_path;
 
-    char printbuf[200];
-    sprintf(printbuf, "[persistent_communication_with_client] %d enter function\n", connfd);
-    log_to_file(printbuf);
-
-    char content_length_header[MAX];
-    char date_header[32];
+    // defining required variables to serve a client
+    char content_length_header[MAX], date_header[32], response[1000];
     long file_size;
-    char response[1000];
     char *connection_timeout_header = "Keep-Alive: timeout=10, max=1000";
     char *connection_keep_alive_header = "Connection: keep-alive";
     char *connection_close_header = "Connection: close";
     time_t now = time(NULL);
-    char *website_dir = "website/";
-    int website_dir_length = strlen(website_dir);
+    int root_path_length = strlen(root_path);
 
     FILE *fp;
-    char *fname;
-    char *fpath;
-    char buff[MAX];
-    char buff2[MAX];
-    char writebuff[MAX];
+    char *fname, *fpath;
+    char buff[MAX], buff2[MAX], writebuff[MAX];
     int n;
 
+    // looping until the client is done requesting
     while (1)
     {
-        sprintf(printbuf, "[persistent_communication_with_client] %d Entering while(1) loop\n", connfd);
-        log_to_file(printbuf);
-
-        // Wait for input on the connfd socket.
-        // If there is input after 10 seconds, close the connectrion.
-
+        // Wait for input on the connfd socket
+        // If there is input after 20 seconds, close the connection
         struct pollfd fds;
         fds.fd = connfd;
         fds.events = POLLIN;
         int ret = poll(&fds, 1, 20000);
         if (ret == 0)
-        {
-            sprintf(printbuf, "[persistent_communication_with_client] %d closing connection, no values from poll\n", connfd);
-            log_to_file(printbuf);
             goto close_connection;
-        }
-
-        sprintf(printbuf, "[persistent_communication_with_client] got through poll %d \n", connfd);
-        log_to_file(printbuf);
 
         // read the message from client and copy it in buffer
         int check = 0;
         int total_read = 0;
         while ((n = read(connfd, buff2, MAX - 1)) > 0)
         {
-            total_read += n; 
+            total_read += n;
             // unsupported HTTP method provided
             if (is_http_method_get(buff2))
             {
                 fname = extract_fname(buff2);
-                sprintf(printbuf, "[persistent_communication_with_client] Get request is received %d File: %s\n", connfd, fname);
-                log_to_file(printbuf);
                 check = 1;
                 memcpy(buff, buff2, MAX);
-            }
-
-            else
-            {
-                sprintf(printbuf, "[persistent_communication_with_client] Remaining buff characters received %d\n", connfd);
-                log_to_file(printbuf);
             }
 
             // hacky way to detect the end of the message.
@@ -185,28 +188,16 @@ void *persistent_communication_with_client(void *arg)
             if (buff2[n - 1] == '\n')
             {
                 if (check == 0)
-                {
-                    sprintf(printbuf, "I Reached the end but didn't find a file %d\n", connfd);
-                    log_to_file(printbuf);
-                    log_to_file(buff2);
                     goto close_connection;
-                }
                 break;
             }
         }
-        if (total_read == 0) {
+
+        // if nothing was read or fname failed to be malloc'ed
+        if (total_read == 0 || fname == NULL)
             goto close_connection;
-        }
 
-        sprintf(printbuf, "[persistent_communication_with_client] finished first while loop %d\n", connfd);
-        log_to_file(printbuf);
-
-        if (fname == NULL)
-        {
-            log_to_file("fname was null... exiting");
-            goto close_connection;
-        }
-
+        // if requesting root
         if (strlen(fname) == 0)
         {
             free(fname);
@@ -215,23 +206,28 @@ void *persistent_communication_with_client(void *arg)
             fname[10] = '\0';
         }
 
-        //appending path with fname
-        fpath = malloc(sizeof(char) * (website_dir_length + strlen(fname) + 1));
-        memcpy(fpath, website_dir, website_dir_length);
-        memcpy(fpath + website_dir_length, fname, strlen(fname));
-        fpath[website_dir_length + strlen(fname)] = '\0';
-        printf("%s\n", fpath);
-
-        if (fpath[strlen(fpath) - 1] == '/')
+        // appending path with fname
+        if (root_path[strlen(root_path) - 1] != '/') // adding a slash at the end
         {
-            /* TODO: restrict users from entering paths such as localhost:8090/assets/ */
+            fpath = malloc(sizeof(char) * (root_path_length + 1 + strlen(fname) + 1));
+            memcpy(fpath, root_path, root_path_length);
+            memcpy(fpath + root_path_length, "/", 1);
+
+            memcpy(fpath + root_path_length + 1, fname, strlen(fname));
+            fpath[root_path_length + 1 + strlen(fname)] = '\0';
+        }
+        else // not need to append slash at the end
+        {
+            fpath = malloc(sizeof(char) * (root_path_length + strlen(fname) + 1));
+            memcpy(fpath, root_path, root_path_length);
+            memcpy(fpath + root_path_length, fname, strlen(fname));
+            fpath[root_path_length + strlen(fname)] = '\0';
         }
 
-
         // opening file for reading
-        if (!(fp = fopen(fpath, "rb")))
+        if (!(fp = fopen(fpath, "rb")) || fpath[strlen(fpath) - 1] == '/')
         {
-            // free(fpath);
+            free(fpath);
             perror("error in reading file");
             // generating response headers
             char body[] = "<h1 style='text-align: center;'>File not found</h1>";
@@ -250,6 +246,7 @@ void *persistent_communication_with_client(void *arg)
         // if an If-Modified-Since header is provided then conditionally return a 304 Not Modified status with no body.
         if (!has_requested_file_been_modified_since(fpath, buff))
         {
+            free(fpath);
             // generating response headers
             char *http_status_code = "HTTP/1.0 304 Not Modified";
 
@@ -265,6 +262,7 @@ void *persistent_communication_with_client(void *arg)
             send_response(connfd, writebuff, response);
             goto close_connection;
         }
+
         else
         {
             // generating response headers
@@ -290,18 +288,14 @@ void *persistent_communication_with_client(void *arg)
             // Sending the body of the request
 
             if (send_file(fp, fpath, connfd) < 0)
-            {
-                goto close_connection; 
-            }
-    
-            // free(fname);
- 
+                goto close_connection;
         }
+
+        free(fpath);
     }
 
 close_connection:
-    // free(fpath);
-    // free(fname);
+    free(fname);
     close(connfd);
     pthread_exit(NULL);
 }

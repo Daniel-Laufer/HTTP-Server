@@ -3,7 +3,7 @@ DEPENDENCIES = server_helpers.h
 
 all : reg_server persistent_server pipelined_server
  
-reg_server : server.o server_helpers.o
+reg_server : Server.o server_helpers.o
 	gcc ${FLAGS} -o $@ $^
 
 persistent_server : PersistentServer.o server_helpers.o
@@ -18,5 +18,3 @@ pipelined_server : PipelinedServer.o server_helpers.o
 clean:
 	rm -f *.o _server
 	rm -f reg_server pipelined_server persistent_server
-	rm -f logfile.txt
-

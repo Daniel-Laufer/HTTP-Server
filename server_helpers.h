@@ -1,13 +1,8 @@
 
 #define MAX 256
-#define NON_PERSIS_SERVER_PORT 8080
-#define PERSIS_SERVER_PORT 8098
-#define PIPE_SERVER_PORT 8099
 
 #define SA struct sockaddr
 #define MAX_CONNECTIONS 100
-
-
 
 /*
 Return the size of this file (number of bytes).
@@ -27,7 +22,6 @@ int send_file(FILE *fp, char *fname, int tarsocket);
  */
 const char *extract_ftype(char *fname);
 
-
 /**
  * Returns the the file name given the <request_info>
  * sent from the client. Remember to free return value once
@@ -40,28 +34,20 @@ char *extract_fname(char *request_info);
  */
 int is_http_method_get(char *request);
 
-
-
 /*
 Returns 1 if the file with the path <fname> has been modified since
 the date-time specified in the If-Modified-Since Header *or* if the
 If-Modified-Since Header isn't present *or* its value is incorrectly formatted
 (failing silently). 
 */
-int has_requested_file_been_modified_since(char *fname, char* buff );
-
+int has_requested_file_been_modified_since(char *fname, char *buff);
 
 /**
  * Returns the value of the If-Modified-Since Header (a date represented by a string)
  */
-struct tm* _extract_modified_since_value(char *request_info);
+struct tm *_extract_modified_since_value(char *request_info);
 
 /*
 Sends a response back to the client and conditionally drops the connection. If successfull, return a 1, otherwise 0. 
 */
 int send_response(int connfd, char *writebuff, char *message_to_write);
-
-/*
-Log file information to a file. 
-*/
-void log_to_file(char *message);
