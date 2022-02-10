@@ -3,7 +3,7 @@ DEPENDENCIES = server_helpers.h
 
 all : reg_server persistent_server pipelined_server
  
-reg_server : Server.o server_helpers.o
+reg_server : server.o server_helpers.o
 	gcc ${FLAGS} -o $@ $^
 
 persistent_server : PersistentServer.o server_helpers.o
