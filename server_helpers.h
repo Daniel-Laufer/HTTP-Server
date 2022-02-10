@@ -2,6 +2,8 @@
 #define MAX 256
 #define NON_PERSIS_SERVER_PORT 8080
 #define PERSIS_SERVER_PORT 8098
+#define PIPE_SERVER_PORT 8099
+
 #define SA struct sockaddr
 #define MAX_CONNECTIONS 100
 
