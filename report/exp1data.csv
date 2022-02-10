@@ -1,0 +1,7 @@
+Simple,Persistent,Pipelined,Apache
+Number of simultaneous connections,Total test execution time (seconds)
+200,400,600,800,1000
+20.026,50.461,61.532,79.611,99.354
+28.600,50.173,77.263,101.526,134.704
+25.033,50.224,75.562,101.774,139.559
+5.050,18.390,17.218,27.340,48.081
