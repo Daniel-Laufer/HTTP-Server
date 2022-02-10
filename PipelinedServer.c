@@ -1,24 +1,22 @@
-#include <fcntl.h>
+
+#include <stdio.h>
+#include <sys/stat.h>
 #include <netdb.h>
 #include <netinet/in.h>
-#include <poll.h>
-#include <pthread.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/stat.h>
 #include <sys/socket.h>
 #include <sys/types.h>
-#include <time.h>
-#include "server_helpers.h"
+#include <poll.h> 
+#include <fcntl.h>
 #include <unistd.h>
+#include <pthread.h>
+#include "server_helpers.h"
+#include <time.h>
 
 #define NUM_THREADS 20
 #define MAX_FNAME 100
-#define MAX_RESPONSE 1000
-#define MAX 256
-#define PIPELINED_SERVER_PORT 8099
-#define MAX_CONNECTIONS 100
+
 
 
 struct arg_struct
@@ -29,26 +27,27 @@ struct arg_struct
     char fname[MAX_FNAME];
 };
 
-
 pthread_mutex_t response_mutex;
 pthread_cond_t sending_cv;  
 int turn = 1; 
 int priority = 1; 
 
 
+
+
 /*
-Responsible for communicating with client through a pipelined HTTP connection
+Responsible for communicating with client through a persistent HTTP connection
 */
 void *pipelined_communication_with_client(void *connfd);
 
-/*
-* Responsible for handling a single request and sending a response
-*/
 void *handle_request(void *arg);
+
 
 // Driver function
 int main()
 {
+    int last_accepted = 0; 
+
     int listenfd, connfd;
     pthread_t threads[NUM_THREADS];
     
@@ -73,14 +72,14 @@ int main()
 
     bzero(&servaddr, sizeof(servaddr));
 
-    // assign IP, PIPELINED_SERVER_PORT
+    // assign IP, PERSIS_SERVER_PORT
     servaddr.sin_family = AF_INET;
 
     // binding the socket to any possible IP address
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 
     // setting up the port the server socket will be listening to
-    servaddr.sin_port = htons(PIPELINED_SERVER_PORT);
+    servaddr.sin_port = htons(PIPE_SERVER_PORT);
 
     // binding newly created socket to the given IP address and port
     if ((bind(listenfd, (SA *)&servaddr, sizeof(servaddr))) != 0)
@@ -105,19 +104,18 @@ int main()
     while ((connfd = accept(listenfd, (SA *)NULL, NULL)) >= 0)
     {
         printf("server accept the client... %d\n", connfd);
-        printf("Creating a thread\n");
-        int *connfd2 = (int *) malloc(sizeof(int));
-        *connfd2 = connfd;
-        int ret = pthread_create(&threads[i], NULL, pipelined_communication_with_client, connfd2);
-        if (ret == -1) {
-            printf("Connection limit exceeded\n");
-            break; 
+        if (last_accepted != connfd) {
+            int *connfd2 = (int *) malloc(sizeof(int));
+            *connfd2 = connfd;
+            pthread_create(&threads[i], NULL, pipelined_communication_with_client, connfd2);
         }
         i++;
 
         if (i == NUM_THREADS) {
             i = 0;
         }
+    
+        last_accepted = connfd; 
     }
 
     if (connfd < 0)
@@ -131,40 +129,61 @@ int main()
 }
 
 
-
 void *pipelined_communication_with_client(void *arg)
 {
-    log_to_file("Starting pipelined communication\n");
     int connfd = *(int *)arg;
 
-    char fname[MAX_FNAME];
+    char printbuf[200];
+    sprintf(printbuf, "[pipelined_communication_with_client] %d enter function\n", connfd);
+    log_to_file(printbuf);
+
+    char *fname;
     char buff[MAX];
     char buff2[MAX];
     int n;
 
     while (1)
     {
+        sprintf(printbuf, "[pipelined_communication_with_client] %d Entering while(1) loop\n", connfd);
+        log_to_file(printbuf);
+
         // Wait for input on the connfd socket.
         // If there is input after 10 seconds, close the connectrion.
-        pthread_t thread;
+
         struct pollfd fds;
         fds.fd = connfd;
         fds.events = POLLIN;
         int ret = poll(&fds, 1, 20000);
         if (ret == 0)
         {
+            sprintf(printbuf, "[pipelined_communication_with_client] %d closing connection, no values from poll\n", connfd);
+            log_to_file(printbuf);
             goto close_connection;
         }
 
+        sprintf(printbuf, "[pipelined_communication_with_client] got through poll %d \n", connfd);
+        log_to_file(printbuf);
+
         // read the message from client and copy it in buffer
         int check = 0;
+        int total_read = 0;
         while ((n = read(connfd, buff2, MAX - 1)) > 0)
         {
+            total_read += n; 
+            // unsupported HTTP method provided
             if (is_http_method_get(buff2))
             {
-                strcpy(fname, extract_fname(buff2));
+                fname = extract_fname(buff2);
+                sprintf(printbuf, "[pipelined_communication_with_client] Get request is received %d File: %s\n", connfd, fname);
+                log_to_file(printbuf);
                 check = 1;
                 memcpy(buff, buff2, MAX);
+            }
+
+            else
+            {
+                sprintf(printbuf, "[pipelined_communication_with_client] Remaining buff characters received %d\n", connfd);
+                log_to_file(printbuf);
             }
 
             // hacky way to detect the end of the message.
@@ -173,85 +192,98 @@ void *pipelined_communication_with_client(void *arg)
             {
                 if (check == 0)
                 {
+                    sprintf(printbuf, "I Reached the end but didn't find a file %d\n", connfd);
+                    log_to_file(printbuf);
+                    log_to_file(buff2);
                     goto close_connection;
                 }
                 break;
             }
         }
+        if (total_read == 0) {
+            goto close_connection;
+        }
 
-        // Create a thread to handle the request
-        struct arg_struct args;
-        args.connfd = connfd;
-        args.priority = priority;
-        strncpy(args.fname, fname, MAX_FNAME);
-        strncpy(args.buff, buff, MAX);
-        pthread_create(&thread, NULL, handle_request, &args);
+        sprintf(printbuf, "[pipelined_communication_with_client] finished first while loop %d\n", connfd);
+        log_to_file(printbuf);
+
+        if (fname == NULL)
+        {
+            log_to_file("fname was null... exiting");
+            goto close_connection;
+        }
+        struct arg_struct *args = (struct arg_struct *)malloc(sizeof(struct arg_struct));
+        args->connfd = connfd;
+        args->priority = priority;
+        strcpy(args->fname, fname);
+        strcpy(args->buff, buff);
+
+
+        // launch a thread to handle the request 
+        pthread_t thread;
+        pthread_create(&thread, NULL, handle_request, args); 
+        // join the thread, and immediately gather the return code
+        int *retval;
+        pthread_join(thread, (void **) &retval);
+        if (*retval == 1) {
+            goto close_connection;
+        }
+        
         priority++;
     }
 
 close_connection:
+    // free(fpath);
+    // free(fname);
     close(connfd);
     pthread_exit(NULL);
 }
 
-void *handle_request(void *arg)
-{
-    // Parsing arguments 
-    struct arg_struct args = *(struct arg_struct *)arg;
-    int connfd = args.connfd;
-    int priority = args.priority; 
 
-
-    char buff[MAX];
-    char *fname = (char *)malloc(MAX_FNAME);
-    strcpy(buff, args.buff);
-    strcpy(fname, args.fname);
-
-    
-    log_to_file("Enter handle_Request, filename is: ");
-    log_to_file(fname);
-    log_to_file("\n");
-
-    // Variable Definitions
-    char content_length_header[MAX];
-    char *fpath;
+void *handle_request(void *arg) {
+    int retval = 0; 
+    pthread_mutex_lock(&response_mutex);
     char writebuff[MAX];
+    char content_length_header[MAX];
     char date_header[32];
+    FILE *fp;
     long file_size;
-    char response[MAX_RESPONSE];
-    char *connection_timeout_header = "Keep-Alive: timeout=60, max=1000";
+    char response[1000];
+    char *connection_timeout_header = "Keep-Alive: timeout=10, max=1000";
     char *connection_keep_alive_header = "Connection: keep-alive";
     char *connection_close_header = "Connection: close";
+    char *fpath;
     time_t now = time(NULL);
     char *website_dir = "website/";
     int website_dir_length = strlen(website_dir);
 
-    FILE *fp;
+    struct arg_struct *args = (struct arg_struct *)arg; 
+    char *fname = malloc(sizeof(char) * MAX_FNAME);
+    char buff[MAX];
+    strcpy(fname, args->fname);
+    strcpy(buff, args->buff);
+    
+    int connfd = args->connfd;
 
-    if (fname == NULL)
-    {
-        goto end_request;
-    }
-
-    if (strlen(fname) == 0)
-    {
-        log_to_file("Length of filename detected to be 0\n");
-        strcpy(fname, "index.html");
+    if (strlen(args->fname) == 0) {
+        free(fname);
+        fname = malloc(sizeof(char) * 11);
+        memcpy(fname, "index.html", 11);
         fname[10] = '\0';
     }
 
     //appending path with fname
-    fpath = malloc(website_dir_length + strlen(fname) + 1);
+    fpath = malloc(sizeof(char) * (website_dir_length + strlen(fname) + 1));
     memcpy(fpath, website_dir, website_dir_length);
     memcpy(fpath + website_dir_length, fname, strlen(fname));
     fpath[website_dir_length + strlen(fname)] = '\0';
-    printf("fpath: %s\n\n", fpath);
+    printf("%s\n", fpath);
+
 
     // opening file for reading
     if (!(fp = fopen(fpath, "rb")))
     {
-        log_to_file("error in reading file\n");
-
+        perror("error in reading file");
         // generating response headers
         char body[] = "<h1 style='text-align: center;'>File not found</h1>";
 
@@ -262,16 +294,8 @@ void *handle_request(void *arg)
 
         int num_printed = sprintf(response, "%s\r\n%s\r\n%s\r\n\r\n%s", http_status_code, connection_close_header, date_header, body);
         response[num_printed] = '\0';
-        pthread_mutex_lock(&response_mutex);
-        while (priority != turn) {
-            pthread_cond_broadcast(&sending_cv);
-            pthread_cond_wait(&sending_cv, &response_mutex);
-        }
         send_response(connfd, writebuff, response);
-        turn++; 
-        pthread_cond_broadcast(&sending_cv);
-        pthread_mutex_unlock(&response_mutex);
-        goto end_request;
+        goto finish_request;
     }
 
     // if an If-Modified-Since header is provided then conditionally return a 304 Not Modified status with no body.
@@ -279,49 +303,55 @@ void *handle_request(void *arg)
     {
         // generating response headers
         char *http_status_code = "HTTP/1.0 304 Not Modified";
+
         strftime(date_header, 32, "Date: %a, %d %b %Y %H:%M:%S", gmtime(&now));
         date_header[31] = '\0';
+
         sprintf(content_length_header, "Content-length: 0");
+
         int num_printed = sprintf(response, "%s\r\n%s\r\n%s\r\n%s\r\n\r\n", http_status_code, connection_close_header, content_length_header, date_header); // no body sent for 304 response
         response[num_printed] = '\0';
-        pthread_mutex_lock(&response_mutex);
-        while (priority != turn) {
-            pthread_cond_broadcast(&sending_cv);
-            pthread_cond_wait(&sending_cv, &response_mutex);
-        }
+        // end generating response headers
+
         send_response(connfd, writebuff, response);
-        turn++; 
-        pthread_cond_broadcast(&sending_cv);
-        pthread_mutex_unlock(&response_mutex);
-        goto end_request;
+        goto finish_request;
     }
     else
     {
+        // generating response headers
         char *http_status_code = "HTTP/1.0 200 Success";
+
         strftime(date_header, 32, "Date: %a, %d %b %Y %H:%M:%S", gmtime(&now));
         date_header[31] = '\0';
+
         char content_type_header[30];
         sprintf(content_type_header, "Content-type: %s", extract_ftype(fpath));
+
         char content_length_header[MAX];
+
         file_size = get_file_size(fp);
         sprintf(content_length_header, "Content-length: %ld", file_size);
 
         int num_printed = sprintf(response, "%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n%s\r\n\r\n", http_status_code, connection_keep_alive_header, connection_timeout_header, date_header, content_length_header, content_type_header);
         response[num_printed] = '\0';
-        
-        pthread_mutex_lock(&response_mutex);
-        while (priority != turn) {
-            pthread_cond_broadcast(&sending_cv);
-            pthread_cond_wait(&sending_cv, &response_mutex);
-        }
+        // end generating response headers
+
         send_response(connfd, writebuff, response);
-        send_file(fp, fpath, connfd);
-        turn++; 
-        pthread_cond_broadcast(&sending_cv);
-        pthread_mutex_unlock(&response_mutex);
+
+        // Sending the body of the request
+
+        if (send_file(fp, fpath, connfd) < 0)
+        {
+            retval = 1; 
+            goto finish_request; 
+        }
+
+        // free(fname);
+
     }
 
-end_request:
-    pthread_exit(NULL);
+    finish_request:
+        pthread_mutex_unlock(&response_mutex);
+        free(args);
+        pthread_exit(&retval);
 }
-
