@@ -17,6 +17,7 @@
 
 #define NUM_THREADS 20
 #define MAX_FNAME 100
+#define FAIL_EXIT 1
 
 struct arg_struct
 {
@@ -68,7 +69,7 @@ int main(int argc, char *argv[])
         if (errno != 0)
         {
             perror("strtol");
-            exit(0);
+            exit(FAIL_EXIT);
         }
     }
 
@@ -77,7 +78,7 @@ int main(int argc, char *argv[])
     if (listenfd == -1)
     {
         printf("socket creation failed...\n");
-        exit(0);
+        exit(FAIL_EXIT);
     }
     printf("Socket successfully created..\n");
 
@@ -101,14 +102,14 @@ int main(int argc, char *argv[])
     if ((bind(listenfd, (SA *)&servaddr, sizeof(servaddr))) != 0)
     {
         printf("socket bind failed...\n");
-        exit(0);
+        exit(FAIL_EXIT);
     }
 
     // now server is ready to listen for new connections
     if ((listen(listenfd, MAX_CONNECTIONS)) != 0)
     {
         printf("Listen failed...\n");
-        exit(0);
+        exit(FAIL_EXIT);
     }
     printf("Server listening..\n");
 
@@ -139,7 +140,7 @@ int main(int argc, char *argv[])
     if (connfd < 0)
     {
         printf("server accept failed...\n");
-        exit(0);
+        exit(FAIL_EXIT);
     }
 
     // After chatting close the socket
@@ -180,8 +181,7 @@ void *pipelined_communication_with_client(void *arg)
                 memcpy(buff, buff2, MAX);
             }
 
-            // hacky way to detect the end of the message.
-            printf("%s\n", buff2);
+            // Detect the end of the message.
             if (buff2[n - 1] == '\n')
             {
                 if (check == 0)

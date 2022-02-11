@@ -136,7 +136,7 @@ void non_persistent_communication_with_client(int connfd, char *root_path)
             memcpy(buff, buff2, MAX);
         }
 
-        // detecting the end of the message
+        // Detect the end of the message.
         if (buff2[n - 1] == '\n')
         {
             // not GET request was found yet end of request was reached

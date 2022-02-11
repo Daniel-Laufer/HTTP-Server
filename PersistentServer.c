@@ -183,8 +183,7 @@ void *persistent_communication_with_client(void *args)
                 memcpy(buff, buff2, MAX);
             }
 
-            // hacky way to detect the end of the message.
-            printf("%s\n", buff2);
+            // Detect the end of the message.
             if (buff2[n - 1] == '\n')
             {
                 if (check == 0)
