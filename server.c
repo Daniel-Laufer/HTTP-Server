@@ -58,7 +58,8 @@ int main(int argc, char *argv[])
     else
         printf("Socket successfully created..\n");
 
-    // fixing the socket bind failed issue
+    // Set socket to re-usable, so the server can be re-launched 
+    // immediately after closing the socket. 
     int yes = 1;
     if ((setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int))) == -1)
         perror("setsockopt");

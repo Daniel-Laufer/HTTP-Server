@@ -163,7 +163,7 @@ void *pipelined_communication_with_client(void *arg)
         struct pollfd fds;
         fds.fd = connfd;
         fds.events = POLLIN;
-        int ret = poll(&fds, 1, 20000);
+        int ret = poll(&fds, 1, 10000);
         if (ret == 0)
             goto close_connection;
 
