@@ -161,11 +161,11 @@ void *persistent_communication_with_client(void *args)
     while (1)
     {
         // Wait for input on the connfd socket
-        // If there is input after 20 seconds, close the connection
+        // If there is input after 10 seconds, close the connection
         struct pollfd fds;
         fds.fd = connfd;
         fds.events = POLLIN;
-        int ret = poll(&fds, 1, 20000);
+        int ret = poll(&fds, 1, 10000);
         if (ret == 0)
             goto close_connection;
 
