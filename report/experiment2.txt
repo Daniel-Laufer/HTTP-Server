@@ -3,105 +3,105 @@
 
  ===persistent==
 httperf --server localhost \
-   --port 80 \
-   --uri /test_dir/exp_2/2MB.jpg \
+   --port 8080 \
+   --uri /test_dir/exp_2/2MB.txt \
    --num-calls 1 --timeout 5 && httperf --server localhost \
-   --port 80 \
-   -uri /test_dir/exp_2/4MB.jpg \
+   --port 8080 \
+   -uri /test_dir/exp_2/4MB.txt \
    --num-calls 200 --timeout 5 && httperf --server localhost \
-   --port 80 \
-   -uri /test_dir/exp_2/8MB.jpg \
+   --port 8080 \
+   -uri /test_dir/exp_2/8MB.txt \
    --num-calls 400 --timeout 5 && httperf --server localhost \
-   --port 80 \
-   -uri /test_dir/exp_2/16MB.jpg \
+   --port 8080 \
+   -uri /test_dir/exp_2/16MB.txt \
    --num-calls 600 --timeout 5 && httperf --server localhost \
-   --port 80 \
-   -uri /test_dir/exp_2/32MB.jpg \
+   --port 8080 \
+   -uri /test_dir/exp_2/32MB.txt \
    --num-calls 800 --timeout 5 && httperf --server localhost \
-   --port 80 \
-   -uri /test_dir/exp_2/64MB.jpg \
+   --port 8080 \
+   -uri /test_dir/exp_2/64MB.txt \
    --num-calls 800 --timeout 5  && httperf --server localhost \
-   --port 80 \
-   -uri /test_dir/exp_2/128MB.jpg \
+   --port 8080 \
+   -uri /test_dir/exp_2/128MB.txt \
    --num-calls 800 --timeout 5  && httperf --server localhost \
-   --port 80 \
-   -uri /test_dir/exp_2/256MB.jpg \
+   --port 8080 \
+   -uri /test_dir/exp_2/256MB.txt \
    --num-calls 800 --timeout 5  && httperf --server localhost \
-   --port 80 \
-   -uri /test_dir/exp_2/512MB.jpg \
+   --port 8080 \
+   -uri /test_dir/exp_2/512MB.txt \
    --num-calls 800 --timeout 5 
     && httperf --server localhost \
-   --port 80 \
-   -uri /test_dir/exp_2/1024MB.jpg \
+   --port 8080 \
+   -uri /test_dir/exp_2/1024MB.txt \
    --num-calls 800 --timeout 5 
 
 
 ===non-persistent==
 httperf --server localhost \
-   -port 80 \
-   --uri /test_dir/exp_2/2MB.jpg \
+   -port 8080 \
+   --uri /test_dir/exp_2/2MB.txt \
    --num-conns 1 --timeout 5 && httperf --server localhost \
-   --port 80 \
-   -uri /test_dir/exp_2/4MB.jpg \
+   --port 8080 \
+   -uri /test_dir/exp_2/4MB.txt \
    --num-conns 200 --timeout 5 && httperf --server localhost \
-   --port 80 \
-   -uri /test_dir/exp_2/8MB.jpg \
+   --port 8080 \
+   -uri /test_dir/exp_2/8MB.txt \
    --num-conns 400 --timeout 5 && httperf --server localhost \
-   --port 80 \
-   -uri /test_dir/exp_2/16MB.jpg \
+   --port 8080 \
+   -uri /test_dir/exp_2/16MB.txt \
    --num-conns 600 --timeout 5 && httperf --server localhost \
-   --port 80 \
-   -uri /test_dir/exp_2/32MB.jpg \
+   --port 8080 \
+   -uri /test_dir/exp_2/32MB.txt \
    --num-conns 800 --timeout 5 && httperf --server localhost \
-   --port 80 \
-   -uri /test_dir/exp_2/64MB.jpg \
+   --port 8080 \
+   -uri /test_dir/exp_2/64MB.txt \
    --num-conns 800 --timeout 5  && httperf --server localhost \
-   --port 80 \
-   -uri /test_dir/exp_2/128MB.jpg \
+   --port 8080 \
+   -uri /test_dir/exp_2/128MB.txt \
    --num-conns 800 --timeout 5  && httperf --server localhost \
-   --port 80 \
-   -uri /test_dir/exp_2/256MB.jpg \
+   --port 8080 \
+   -uri /test_dir/exp_2/256MB.txt \
    --num-conns 800 --timeout 5  && httperf --server localhost \
-   --port 80 \
-   -uri /test_dir/exp_2/512MB.jpg \
+   --port 8080 \
+   -uri /test_dir/exp_2/512MB.txt \
    --num-conns 800 --timeout 5 
     && httperf --server localhost \
-   --port 80 \
-   -uri /test_dir/exp_2/1024MB.jpg \
+   --port 8080 \
+   -uri /test_dir/exp_2/1024MB.txt \
    --num-conns 800 --timeout 5 
 == pipeline == 
 
 httperf --server localhost \
-   --port 80 \
-   --uri /test_dir/exp_2/2MB.jpg \
+   --port 8080 \
+   --uri /test_dir/exp_2/2MB.txt \
    --num-calls 1 --timeout 5 && httperf --server localhost \
-   --port 80 \
-   -uri /test_dir/exp_2/4MB.jpg \
+   --port 8080 \
+   -uri /test_dir/exp_2/4MB.txt \
    --num-calls 200 --timeout 5 && httperf --server localhost \
-   --port 80 \
-   -uri /test_dir/exp_2/8MB.jpg \
+   --port 8080 \
+   -uri /test_dir/exp_2/8MB.txt \
    --num-calls 400 --timeout 5 && httperf --server localhost \
-   --port 80 \
-   -uri /test_dir/exp_2/16MB.jpg \
+   --port 8080 \
+   -uri /test_dir/exp_2/16MB.txt \
    --num-calls 600 --timeout 5 && httperf --server localhost \
-   --port 80 \
-   -uri /test_dir/exp_2/32MB.jpg \
+   --port 8080 \
+   -uri /test_dir/exp_2/32MB.txt \
    --num-calls 800 --timeout 5 && httperf --server localhost \
-   --port 80 \
-   -uri /test_dir/exp_2/64MB.jpg \
+   --port 8080 \
+   -uri /test_dir/exp_2/64MB.txt \
    --num-calls 800 --timeout 5  && httperf --server localhost \
-   --port 80 \
-   -uri /test_dir/exp_2/128MB.jpg \
+   --port 8080 \
+   -uri /test_dir/exp_2/128MB.txt \
    --num-calls 800 --timeout 5  && httperf --server localhost \
-   --port 80 \
-   -uri /test_dir/exp_2/256MB.jpg \
+   --port 8080 \
+   -uri /test_dir/exp_2/256MB.txt \
    --num-calls 800 --timeout 5  && httperf --server localhost \
-   --port 80 \
-   -uri /test_dir/exp_2/512MB.jpg \
+   --port 8080 \
+   -uri /test_dir/exp_2/512MB.txt \
    --num-calls 800 --timeout 5 
     && httperf --server localhost \
-   --port 80 \
-   -uri /test_dir/exp_2/1024MB.jpg \
+   --port 8080 \
+   -uri /test_dir/exp_2/1024MB.txt \
    --num-calls 800 --timeout 5 
 
 
@@ -109,35 +109,35 @@ httperf --server localhost \
 
  httperf --server 127.0.0.1 \
    --port 80 \
-   --uri /test_dir/exp_2/2MB.jpg \
+   --uri /test_dir/exp_2/2MB.txt \
    --num-calls 1 --timeout 5 && httperf --server localhost \
    --port 80 \
-   -uri /test_dir/exp_2/4MB.jpg \
+   -uri /test_dir/exp_2/4MB.txt \
    --num-calls 200 --timeout 5 && httperf --server localhost \
    --port 80 \
-   -uri /test_dir/exp_2/8MB.jpg \
+   -uri /test_dir/exp_2/8MB.txt \
    --num-calls 400 --timeout 5 && httperf --server localhost \
    --port 80 \
-   -uri /test_dir/exp_2/16MB.jpg \
+   -uri /test_dir/exp_2/16MB.txt \
    --num-calls 600 --timeout 5 && httperf --server localhost \
    --port 80 \
-   -uri /test_dir/exp_2/32MB.jpg \
+   -uri /test_dir/exp_2/32MB.txt \
    --num-calls 800 --timeout 5 && httperf --server localhost \
    --port 80 \
-   -uri /test_dir/exp_2/64MB.jpg \
+   -uri /test_dir/exp_2/64MB.txt \
    --num-calls 800 --timeout 5  && httperf --server localhost \
    --port 80 \
-   -uri /test_dir/exp_2/128MB.jpg \
+   -uri /test_dir/exp_2/128MB.txt \
    --num-calls 800 --timeout 5  && httperf --server localhost \
    --port 80 \
-   -uri /test_dir/exp_2/256MB.jpg \
+   -uri /test_dir/exp_2/256MB.txt \
    --num-calls 800 --timeout 5  && httperf --server localhost \
    --port 80 \
-   -uri /test_dir/exp_2/512MB.jpg \
+   -uri /test_dir/exp_2/512MB.txt \
    --num-calls 800 --timeout 5 
     && httperf --server localhost \
    --port 80 \
-   -uri /test_dir/exp_2/1024MB.jpg \
+   -uri /test_dir/exp_2/1024MB.txt \
    --num-calls 800 --timeout 5 
 
 
@@ -146,33 +146,33 @@ httperf --server localhost \
 
  httperf --server 127.0.0.1 \
    -port 80 \
-   --uri /test_dir/exp_2/2MB.jpg \
+   --uri /test_dir/exp_2/2MB.txt \
    --num-conns 1 --timeout 5 && httperf --server localhost \
    --port 80 \
-   -uri /test_dir/exp_2/4MB.jpg \
+   -uri /test_dir/exp_2/4MB.txt \
    --num-conns 200 --timeout 5 && httperf --server localhost \
    --port 80 \
-   -uri /test_dir/exp_2/8MB.jpg \
+   -uri /test_dir/exp_2/8MB.txt \
    --num-conns 400 --timeout 5 && httperf --server localhost \
    --port 80 \
-   -uri /test_dir/exp_2/16MB.jpg \
+   -uri /test_dir/exp_2/16MB.txt \
    --num-conns 600 --timeout 5 && httperf --server localhost \
    --port 80 \
-   -uri /test_dir/exp_2/32MB.jpg \
+   -uri /test_dir/exp_2/32MB.txt \
    --num-conns 800 --timeout 5 && httperf --server localhost \
    --port 80 \
-   -uri /test_dir/exp_2/64MB.jpg \
+   -uri /test_dir/exp_2/64MB.txt \
    --num-conns 800 --timeout 5  && httperf --server localhost \
    --port 80 \
-   -uri /test_dir/exp_2/128MB.jpg \
+   -uri /test_dir/exp_2/128MB.txt \
    --num-conns 800 --timeout 5  && httperf --server localhost \
    --port 80 \
-   -uri /test_dir/exp_2/256MB.jpg \
+   -uri /test_dir/exp_2/256MB.txt \
    --num-conns 800 --timeout 5  && httperf --server localhost \
    --port 80 \
-   -uri /test_dir/exp_2/512MB.jpg \
+   -uri /test_dir/exp_2/512MB.txt \
    --num-conns 800 --timeout 5 
     && httperf --server localhost \
    --port 80 \
-   -uri /test_dir/exp_2/1024MB.jpg \
+   -uri /test_dir/exp_2/1024MB.txt \
    --num-conns 800 --timeout 5 
