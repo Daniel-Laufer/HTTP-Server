@@ -129,19 +129,19 @@ httperf --server 127.0.0.1 \
    --port 80 \
    --uri /test_dir/exp_2/32MB.txt \
    --num-conns 1 --timeout 5 && httperf --server 127.0.0.1 \
-   --port 8080 \
+   --port 80 \
    --uri /test_dir/exp_2/64MB.txt \
    --num-conns 1 --timeout 5 && httperf --server 127.0.0.1 \
-   --port 8080 \
+   --port 80 \
    --uri /test_dir/exp_2/128MB.txt \
    --num-conns 1 --timeout 5 && httperf --server 127.0.0.1 \
-   --port 8080 \
+   --port 80 \
    --uri /test_dir/exp_2/256MB.txt \
    --num-conns 1 --timeout 5 && httperf --server 127.0.0.1 \
-   --port 8080 \
+   --port 80 \
    --uri /test_dir/exp_2/512MB.txt \
    --num-conns 1 --timeout 5 && httperf --server 127.0.0.1 \
-   --port 8080 \
+   --port 80 \
    --uri /test_dir/exp_2/1024MB.txt \
    --num-conns 1 --timeout 5
 
@@ -167,18 +167,18 @@ httperf --server 127.0.0.1 \
    --port 80 \
    --uri /test_dir/exp_2/32MB.txt \
    --num-conns 1 --timeout 5 && httperf --server 127.0.0.1 \
-   --port 8080 \
+   --port 80 \
    --uri /test_dir/exp_2/64MB.txt \
    --num-conns 1 --timeout 5 && httperf --server 127.0.0.1 \
-   --port 8080 \
+   --port 80 \
    --uri /test_dir/exp_2/128MB.txt \
    --num-conns 1 --timeout 5 && httperf --server 127.0.0.1 \
-   --port 8080 \
+   --port 80 \
    --uri /test_dir/exp_2/256MB.txt \
    --num-conns 1 --timeout 5 && httperf --server 127.0.0.1 \
-   --port 8080 \
+   --port 80 \
    --uri /test_dir/exp_2/512MB.txt \
    --num-conns 1 --timeout 5 && httperf --server 127.0.0.1 \
-   --port 8080 \
+   --port 80 \
    --uri /test_dir/exp_2/1024MB.txt \
    --num-conns 1 --timeout 5
