@@ -29,8 +29,7 @@ httperf --server localhost \
    --num-calls 800 --timeout 5  && httperf --server localhost \
    --port 8080 \
    -uri /test_dir/exp_2/512MB.txt \
-   --num-calls 800 --timeout 5 
-    && httperf --server localhost \
+   --num-calls 800 --timeout 5 && httperf --server localhost \
    --port 8080 \
    -uri /test_dir/exp_2/1024MB.txt \
    --num-calls 800 --timeout 5 
@@ -64,8 +63,7 @@ httperf --server localhost \
    --num-conns 800 --timeout 5  && httperf --server localhost \
    --port 8080 \
    -uri /test_dir/exp_2/512MB.txt \
-   --num-conns 800 --timeout 5 
-    && httperf --server localhost \
+   --num-conns 800 --timeout 5 && httperf --server localhost \
    --port 8080 \
    -uri /test_dir/exp_2/1024MB.txt \
    --num-conns 800 --timeout 5 
@@ -98,8 +96,7 @@ httperf --server localhost \
    --num-calls 800 --timeout 5  && httperf --server localhost \
    --port 8080 \
    -uri /test_dir/exp_2/512MB.txt \
-   --num-calls 800 --timeout 5 
-    && httperf --server localhost \
+   --num-calls 800 --timeout 5 && httperf --server localhost \
    --port 8080 \
    -uri /test_dir/exp_2/1024MB.txt \
    --num-calls 800 --timeout 5 
@@ -134,8 +131,7 @@ httperf --server localhost \
    --num-calls 800 --timeout 5  && httperf --server localhost \
    --port 80 \
    -uri /test_dir/exp_2/512MB.txt \
-   --num-calls 800 --timeout 5 
-    && httperf --server localhost \
+   --num-calls 800 --timeout 5 && httperf --server localhost \
    --port 80 \
    -uri /test_dir/exp_2/1024MB.txt \
    --num-calls 800 --timeout 5 
@@ -171,8 +167,7 @@ httperf --server localhost \
    --num-conns 800 --timeout 5  && httperf --server localhost \
    --port 80 \
    -uri /test_dir/exp_2/512MB.txt \
-   --num-conns 800 --timeout 5 
-    && httperf --server localhost \
+   --num-conns 800 --timeout 5 && httperf --server localhost \
    --port 80 \
    -uri /test_dir/exp_2/1024MB.txt \
    --num-conns 800 --timeout 5 
