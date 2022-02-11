@@ -17,7 +17,24 @@
    --num-conns 1 --timeout 5 && httperf --server localhost \
    --port 8080 \
    --uri /test_dir/exp_2/32MB.txt \
+   --num-conns 1 --timeout 5 && httperf --server localhost \
+   --port 8080 \
+   --uri /test_dir/exp_2/64MB.txt \
+   --num-conns 1 --timeout 5 && httperf --server localhost \
+   --port 8080 \
+   --uri /test_dir/exp_2/128MB.txt \
+   --num-conns 1 --timeout 5 && httperf --server localhost \
+   --port 8080 \
+   --uri /test_dir/exp_2/256MB.txt \
+   --num-conns 1 --timeout 5 && httperf --server localhost \
+   --port 8080 \
+   --uri /test_dir/exp_2/512MB.txt \
+   --num-conns 1 --timeout 5 && httperf --server localhost \
+   --port 8080 \
+   --uri /test_dir/exp_2/1024MB.txt \
    --num-conns 1 --timeout 5
+   
+   
 
 
 ===non-persistent==
