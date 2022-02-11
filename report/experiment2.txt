@@ -64,7 +64,7 @@ httperf --server localhost \
  == apache  (persistent)==
 
 httperf --server 127.0.0.1 \
-   --port 8080 \
+   --port 80 \
    --uri /test_dir/exp_2/512KB.txt \
    --num-conns 1 --timeout 5 && httperf --server 127.0.0.1 \
    --port 80 \
@@ -87,7 +87,7 @@ httperf --server 127.0.0.1 \
 
 == apache  (non-persistent)==
 httperf --server 127.0.0.1 \
-   --port 8080 \
+   --port 80 \
    --uri /test_dir/exp_2/512KB.txt \
    --num-conns 1 --timeout 5 && httperf --server 127.0.0.1 \
    --port 80 \
