@@ -126,7 +126,7 @@ const char *extract_ftype(char *fname)
         return "text/javascript";
     }
 
-    else if (strcmp(rest, ".jpg") == 0)
+    else if (strcmp(rest, ".jpg") == 0 || strcmp(rest, ".jpeg") == 0)
     {
         return "image/jpeg";
     }
