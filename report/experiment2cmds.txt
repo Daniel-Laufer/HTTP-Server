@@ -79,7 +79,10 @@ httperf --server localhost \
 httperf --server localhost \
    --port 8080 \
    --uri /test_dir/exp_2/512KB.txt \
-   --num-conns 1 --timeout 5 & httperf --server localhost \
+   --num-conns 1 --timeout 5 && httperf --server localhost \
+   --port 8080 \
+   --uri /test_dir/exp_2/2MB.txt \
+   --num-conns 1 --timeout 5&& httperf --server localhost \
    --port 8080 \
    --uri /test_dir/exp_2/4MB.txt \
    --num-conns 1 --timeout 5 && httperf --server localhost \

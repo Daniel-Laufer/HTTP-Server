@@ -1,6 +1,0 @@
-Simple,Persistent,Pipelined,Apache
-Number of requests over one persistent connection
-1,10,100,1000
-0.325,0,0,0
-0.340,2.491,23.680, 237.411
-0.337,2.456,25.141,241.867
