@@ -1,0 +1,957 @@
+[persistent_communication_with_client] 4 enter function
+[persistent_communication_with_client] 4 Entering while(1) loop
+[persistent_communication_with_client] got through poll 4 
+[persistent_communication_with_client] Get request is received 4 File: 
+[persistent_communication_with_client] finished first while loop 4
+[persistent_communication_with_client] 4 Entering while(1) loop
+[persistent_communication_with_client] got through poll 4 
+[persistent_communication_with_client] finished first while loop 4
+[persistent_communication_with_client] 4 Entering while(1) loop
+[persistent_communication_with_client] got through poll 4 
+[persistent_communication_with_client] finished first while loop 4
+[persistent_communication_with_client] 4 enter function
+[persistent_communication_with_client] 4 Entering while(1) loop
+[persistent_communication_with_client] got through poll 4 
+[persistent_communication_with_client] Get request is received 4 File: 
+[persistent_communication_with_client] finished first while loop 4
+[persistent_communication_with_client] 4 Entering while(1) loop
+[persistent_communication_with_client] got through poll 4 
+[persistent_communication_with_client] finished first while loop 4
+[persistent_communication_with_client] 4 Entering while(1) loop
+[persistent_communication_with_client] got through poll 4 
+[persistent_communication_with_client] finished first while loop 4
+[persistent_communication_with_client] 5 enter function
+[persistent_communication_with_client] 5 Entering while(1) loop
+[persistent_communication_with_client] got through poll 5 
+[persistent_communication_with_client] Get request is received 5 File: 
+[persistent_communication_with_client] finished first while loop 5
+[persistent_communication_with_client] 5 Entering while(1) loop
+[persistent_communication_with_client] got through poll 5 
+[persistent_communication_with_client] finished first while loop 5
+[persistent_communication_with_client] 5 Entering while(1) loop
+[persistent_communication_with_client] got through poll 5 
+[persistent_communication_with_client] finished first while loop 5
+[persistent_communication_with_client] 6 enter function
+[persistent_communication_with_client] 6 Entering while(1) loop
+[persistent_communication_with_client] got through poll 6 
+[persistent_communication_with_client] Get request is received 6 File: 
+[persistent_communication_with_client] Remaining buff characters received 6
+[persistent_communication_with_client] Remaining buff characters received 6
+[persistent_communication_with_client] finished first while loop 6
+[persistent_communication_with_client] 6 Entering while(1) loop
+[persistent_communication_with_client] got through poll 6 
+[persistent_communication_with_client] Get request is received 6 File: assets/index.css
+[persistent_communication_with_client] Remaining buff characters received 6
+[persistent_communication_with_client] Remaining buff characters received 6
+[persistent_communication_with_client] finished first while loop 6
+[persistent_communication_with_client] 8 enter function
+[persistent_communication_with_client] 8 Entering while(1) loop
+[persistent_communication_with_client] got through poll 8 
+[persistent_communication_with_client] 6 Entering while(1) loop
+[persistent_communication_with_client] Get request is received 8 File: assets/pics/utm.jpg
+[persistent_communication_with_client] Remaining buff characters received 8
+[persistent_communication_with_client] Remaining buff characters received 8
+[persistent_communication_with_client] finished first while loop 8
+[persistent_communication_with_client] 8 Entering while(1) loop
+[persistent_communication_with_client] got through poll 8 
+[persistent_communication_with_client] Get request is received 8 File: assets/index.js
+[persistent_communication_with_client] Remaining buff characters received 8
+[persistent_communication_with_client] Remaining buff characters received 8
+[persistent_communication_with_client] finished first while loop 8
+[persistent_communication_with_client] 8 Entering while(1) loop
+[persistent_communication_with_client] got through poll 6 
+[persistent_communication_with_client] 7 enter function
+[persistent_communication_with_client] 7 Entering while(1) loop
+[persistent_communication_with_client] Get request is received 6 File: assets/pics/deer.jpg
+[persistent_communication_with_client] Remaining buff characters received 6
+[persistent_communication_with_client] Remaining buff characters received 6
+[persistent_communication_with_client] finished first while loop 6
+[persistent_communication_with_client] 9 enter function
+[persistent_communication_with_client] 11 enter function
+[persistent_communication_with_client] 9 Entering while(1) loop
+[persistent_communication_with_client] 11 Entering while(1) loop
+[persistent_communication_with_client] got through poll 7 
+[persistent_communication_with_client] Get request is received 7 File: assets/pics/ib.jpg
+[persistent_communication_with_client] Remaining buff characters received 7
+[persistent_communication_with_client] Remaining buff characters received 7
+[persistent_communication_with_client] got through poll 11 
+[persistent_communication_with_client] got through poll 9 
+[persistent_communication_with_client] finished first while loop 7
+[persistent_communication_with_client] Get request is received 11 File: assets/pics/davis.jpg
+[persistent_communication_with_client] Get request is received 9 File: assets/pics/dh.jpg
+[persistent_communication_with_client] Remaining buff characters received 9
+[persistent_communication_with_client] Remaining buff characters received 11
+[persistent_communication_with_client] Remaining buff characters received 9
+[persistent_communication_with_client] finished first while loop 9
+[persistent_communication_with_client] Remaining buff characters received 11
+[persistent_communication_with_client] finished first while loop 11
+[persistent_communication_with_client] 6 Entering while(1) loop
+[persistent_communication_with_client] 9 Entering while(1) loop
+[persistent_communication_with_client] 11 Entering while(1) loop
+[persistent_communication_with_client] 7 Entering while(1) loop
+[persistent_communication_with_client] 8 closing connection, no values from poll
+[persistent_communication_with_client] 9 closing connection, no values from poll
+[persistent_communication_with_client] 6 closing connection, no values from poll
+[persistent_communication_with_client] 11 closing connection, no values from poll
+[persistent_communication_with_client] 7 closing connection, no values from poll
+[persistent_communication_with_client] 6 enter function
+[persistent_communication_with_client] 6 Entering while(1) loop
+[persistent_communication_with_client] got through poll 6 
+[persistent_communication_with_client] Get request is received 6 File: assets/index.css
+[persistent_communication_with_client] finished first while loop 6
+[persistent_communication_with_client] 6 Entering while(1) loop
+[persistent_communication_with_client] got through poll 6 
+[persistent_communication_with_client] finished first while loop 6
+[persistent_communication_with_client] 7 enter function
+[persistent_communication_with_client] 7 Entering while(1) loop
+[persistent_communication_with_client] got through poll 7 
+[persistent_communication_with_client] Get request is received 7 File: assets/index.css
+[persistent_communication_with_client] finished first while loop 7
+[persistent_communication_with_client] 7 Entering while(1) loop
+[persistent_communication_with_client] got through poll 7 
+[persistent_communication_with_client] finished first while loop 7
+[persistent_communication_with_client] 7 Entering while(1) loop
+[persistent_communication_with_client] got through poll 7 
+[persistent_communication_with_client] finished first while loop 7
+[persistent_communication_with_client] 8 enter function
+[persistent_communication_with_client] 8 Entering while(1) loop
+[persistent_communication_with_client] got through poll 8 
+[persistent_communication_with_client] Get request is received 8 File: assets/index.css
+[persistent_communication_with_client] finished first while loop 8
+[persistent_communication_with_client] 8 Entering while(1) loop
+[persistent_communication_with_client] got through poll 8 
+[persistent_communication_with_client] finished first while loop 8
+[persistent_communication_with_client] 8 Entering while(1) loop
+[persistent_communication_with_client] got through poll 8 
+[persistent_communication_with_client] finished first while loop 8
+[persistent_communication_with_client] 9 enter function
+[persistent_communication_with_client] 9 Entering while(1) loop
+[persistent_communication_with_client] got through poll 9 
+[persistent_communication_with_client] Get request is received 9 File: 
+[persistent_communication_with_client] Remaining buff characters received 9
+[persistent_communication_with_client] Remaining buff characters received 9
+[persistent_communication_with_client] finished first while loop 9
+[persistent_communication_with_client] 9 Entering while(1) loop
+[persistent_communication_with_client] got through poll 9 
+[persistent_communication_with_client] Get request is received 9 File: assets/index.css
+[persistent_communication_with_client] Remaining buff characters received 9
+[persistent_communication_with_client] Remaining buff characters received 9
+[persistent_communication_with_client] finished first while loop 9
+[persistent_communication_with_client] 9 Entering while(1) loop
+[persistent_communication_with_client] got through poll 9 
+[persistent_communication_with_client] Get request is received 9 File: assets/pics/utm.jpg
+[persistent_communication_with_client] Remaining buff characters received 9
+[persistent_communication_with_client] Remaining buff characters received 9
+[persistent_communication_with_client] finished first while loop 9
+[persistent_communication_with_client] 13 enter function
+[persistent_communication_with_client] 11 enter function
+[persistent_communication_with_client] 13 Entering while(1) loop
+[persistent_communication_with_client] 9 Entering while(1) loop
+[persistent_communication_with_client] 11 Entering while(1) loop
+[persistent_communication_with_client] got through poll 11 
+[persistent_communication_with_client] Get request is received 11 File: assets/index.js
+[persistent_communication_with_client] Remaining buff characters received 11
+[persistent_communication_with_client] Remaining buff characters received 11
+[persistent_communication_with_client] finished first while loop 11
+[persistent_communication_with_client] got through poll 13 
+[persistent_communication_with_client] Get request is received 13 File: assets/pics/deer.jpg
+[persistent_communication_with_client] Remaining buff characters received 13
+[persistent_communication_with_client] Remaining buff characters received 13
+[persistent_communication_with_client] finished first while loop 13
+[persistent_communication_with_client] 10 enter function
+[persistent_communication_with_client] 16 enter function
+[persistent_communication_with_client] 15 enter function
+[persistent_communication_with_client] 11 Entering while(1) loop
+[persistent_communication_with_client] 16 Entering while(1) loop
+[persistent_communication_with_client] 15 Entering while(1) loop
+[persistent_communication_with_client] 10 Entering while(1) loop
+[persistent_communication_with_client] got through poll 15 
+[persistent_communication_with_client] Get request is received 15 File: assets/pics/davis.jpg
+[persistent_communication_with_client] got through poll 16 
+[persistent_communication_with_client] got through poll 10 
+[persistent_communication_with_client] Remaining buff characters received 15
+[persistent_communication_with_client] Remaining buff characters received 15
+[persistent_communication_with_client] 13 Entering while(1) loop
+[persistent_communication_with_client] Get request is received 10 File: assets/pics/ib.jpg
+[persistent_communication_with_client] Get request is received 16 File: assets/pics/dh.jpg
+[persistent_communication_with_client] finished first while loop 15
+[persistent_communication_with_client] Remaining buff characters received 10
+[persistent_communication_with_client] Remaining buff characters received 16
+[persistent_communication_with_client] Remaining buff characters received 10
+[persistent_communication_with_client] Remaining buff characters received 16
+[persistent_communication_with_client] finished first while loop 10
+[persistent_communication_with_client] finished first while loop 16
+[persistent_communication_with_client] 16 Entering while(1) loop
+[persistent_communication_with_client] 15 Entering while(1) loop
+[persistent_communication_with_client] 10 Entering while(1) loop
+[persistent_communication_with_client] got through poll 10 
+[persistent_communication_with_client] Get request is received 10 File: favicon.ico
+[persistent_communication_with_client] Remaining buff characters received 10
+[persistent_communication_with_client] Remaining buff characters received 10
+[persistent_communication_with_client] finished first while loop 10
+[persistent_communication_with_client] 10 Entering while(1) loop
+[persistent_communication_with_client] got through poll 10 
+[persistent_communication_with_client] Get request is received 10 File: 
+[persistent_communication_with_client] Remaining buff characters received 10
+[persistent_communication_with_client] Remaining buff characters received 10
+[persistent_communication_with_client] finished first while loop 10
+[persistent_communication_with_client] 10 Entering while(1) loop
+[persistent_communication_with_client] got through poll 10 
+[persistent_communication_with_client] Get request is received 10 File: assets/index.css
+[persistent_communication_with_client] Remaining buff characters received 10
+[persistent_communication_with_client] Remaining buff characters received 10
+[persistent_communication_with_client] finished first while loop 10
+[persistent_communication_with_client] 10 Entering while(1) loop
+[persistent_communication_with_client] got through poll 10 
+[persistent_communication_with_client] Get request is received 10 File: assets/pics/utm.jpg
+[persistent_communication_with_client] got through poll 15 
+[persistent_communication_with_client] got through poll 13 
+[persistent_communication_with_client] got through poll 9 
+[persistent_communication_with_client] got through poll 16 
+[persistent_communication_with_client] Get request is received 13 File: assets/pics/deer.jpg
+[persistent_communication_with_client] got through poll 11 
+[persistent_communication_with_client] Get request is received 9 File: assets/pics/dh.jpg
+[persistent_communication_with_client] Remaining buff characters received 9
+[persistent_communication_with_client] Remaining buff characters received 9
+[persistent_communication_with_client] Get request is received 15 File: assets/index.js
+[persistent_communication_with_client] Remaining buff characters received 10
+[persistent_communication_with_client] Get request is received 11 File: assets/pics/davis.jpg
+[persistent_communication_with_client] Remaining buff characters received 15
+[persistent_communication_with_client] Remaining buff characters received 15
+[persistent_communication_with_client] finished first while loop 9
+[persistent_communication_with_client] Get request is received 16 File: assets/pics/ib.jpg
+[persistent_communication_with_client] Remaining buff characters received 13
+[persistent_communication_with_client] Remaining buff characters received 10
+[persistent_communication_with_client] Remaining buff characters received 11
+[persistent_communication_with_client] finished first while loop 15
+[persistent_communication_with_client] finished first while loop 10
+[persistent_communication_with_client] Remaining buff characters received 13
+[persistent_communication_with_client] finished first while loop 13
+[persistent_communication_with_client] Remaining buff characters received 16
+[persistent_communication_with_client] Remaining buff characters received 16
+[persistent_communication_with_client] 15 Entering while(1) loop
+[persistent_communication_with_client] finished first while loop 16
+[persistent_communication_with_client] 13 Entering while(1) loop
+[persistent_communication_with_client] 10 Entering while(1) loop
+[persistent_communication_with_client] Remaining buff characters received 11
+[persistent_communication_with_client] finished first while loop 11
+[persistent_communication_with_client] 16 Entering while(1) loop
+[persistent_communication_with_client] 11 Entering while(1) loop
+[persistent_communication_with_client] 9 Entering while(1) loop
+[persistent_communication_with_client] got through poll 16 
+[persistent_communication_with_client] Get request is received 16 File: favicon.ico
+[persistent_communication_with_client] Remaining buff characters received 16
+[persistent_communication_with_client] Remaining buff characters received 16
+[persistent_communication_with_client] finished first while loop 16
+[persistent_communication_with_client] 16 Entering while(1) loop
+[persistent_communication_with_client] got through poll 16 
+[persistent_communication_with_client] Get request is received 16 File: 
+[persistent_communication_with_client] Remaining buff characters received 16
+[persistent_communication_with_client] Remaining buff characters received 16
+[persistent_communication_with_client] finished first while loop 16
+[persistent_communication_with_client] 16 Entering while(1) loop
+[persistent_communication_with_client] got through poll 16 
+[persistent_communication_with_client] Get request is received 16 File: assets/index.css
+[persistent_communication_with_client] Remaining buff characters received 16
+[persistent_communication_with_client] Remaining buff characters received 16
+[persistent_communication_with_client] finished first while loop 16
+[persistent_communication_with_client] 16 Entering while(1) loop
+[persistent_communication_with_client] got through poll 16 
+[persistent_communication_with_client] Get request is received 16 File: assets/pics/utm.jpg
+[persistent_communication_with_client] got through poll 11 
+[persistent_communication_with_client] Remaining buff characters received 16
+[persistent_communication_with_client] Get request is received 11 File: assets/index.js
+[persistent_communication_with_client] Remaining buff characters received 11
+[persistent_communication_with_client] Remaining buff characters received 16
+[persistent_communication_with_client] Remaining buff characters received 11
+[persistent_communication_with_client] finished first while loop 16
+[persistent_communication_with_client] got through poll 13 
+[persistent_communication_with_client] got through poll 10 
+[persistent_communication_with_client] got through poll 9 
+[persistent_communication_with_client] got through poll 15 
+[persistent_communication_with_client] Get request is received 10 File: assets/pics/ib.jpg
+[persistent_communication_with_client] Remaining buff characters received 10
+[persistent_communication_with_client] Get request is received 15 File: assets/pics/davis.jpg
+[persistent_communication_with_client] finished first while loop 11
+[persistent_communication_with_client] Get request is received 9 File: assets/pics/dh.jpg
+[persistent_communication_with_client] Get request is received 13 File: assets/pics/deer.jpg
+[persistent_communication_with_client] Remaining buff characters received 9
+[persistent_communication_with_client] Remaining buff characters received 9
+[persistent_communication_with_client] Remaining buff characters received 15
+[persistent_communication_with_client] finished first while loop 9
+[persistent_communication_with_client] Remaining buff characters received 10
+[persistent_communication_with_client] finished first while loop 10
+[persistent_communication_with_client] 16 Entering while(1) loop
+[persistent_communication_with_client] Remaining buff characters received 15
+[persistent_communication_with_client] finished first while loop 15
+[persistent_communication_with_client] Remaining buff characters received 13
+[persistent_communication_with_client] Remaining buff characters received 13
+[persistent_communication_with_client] finished first while loop 13
+[persistent_communication_with_client] 11 Entering while(1) loop
+[persistent_communication_with_client] 9 Entering while(1) loop
+[persistent_communication_with_client] 13 Entering while(1) loop
+[persistent_communication_with_client] 15 Entering while(1) loop
+[persistent_communication_with_client] 10 Entering while(1) loop
+[persistent_communication_with_client] got through poll 10 
+[persistent_communication_with_client] Get request is received 10 File: favicon.ico
+[persistent_communication_with_client] Remaining buff characters received 10
+[persistent_communication_with_client] Remaining buff characters received 10
+[persistent_communication_with_client] finished first while loop 10
+[persistent_communication_with_client] 10 Entering while(1) loop
+[persistent_communication_with_client] 16 closing connection, no values from poll
+[persistent_communication_with_client] 9 closing connection, no values from poll
+[persistent_communication_with_client] 11 closing connection, no values from poll
+[persistent_communication_with_client] 13 closing connection, no values from poll
+[persistent_communication_with_client] 15 closing connection, no values from poll
+[persistent_communication_with_client] 10 closing connection, no values from poll
+[persistent_communication_with_client] 4 enter function
+[persistent_communication_with_client] 4 Entering while(1) loop
+[persistent_communication_with_client] got through poll 4 
+[persistent_communication_with_client] Get request is received 4 File: 
+[persistent_communication_with_client] finished first while loop 4
+[persistent_communication_with_client] 4 Entering while(1) loop
+[persistent_communication_with_client] got through poll 4 
+[persistent_communication_with_client] 4 enter function
+[persistent_communication_with_client] 4 Entering while(1) loop
+[persistent_communication_with_client] got through poll 4 
+[persistent_communication_with_client] Get request is received 4 File: 
+[persistent_communication_with_client] finished first while loop 4
+[persistent_communication_with_client] 4 Entering while(1) loop
+[persistent_communication_with_client] got through poll 4 
+[persistent_communication_with_client] 5 enter function
+[persistent_communication_with_client] 5 Entering while(1) loop
+[persistent_communication_with_client] got through poll 5 
+[persistent_communication_with_client] Get request is received 5 File: 
+[persistent_communication_with_client] finished first while loop 5
+[persistent_communication_with_client] 5 Entering while(1) loop
+[persistent_communication_with_client] got through poll 5 
+[persistent_communication_with_client] 6 enter function
+[persistent_communication_with_client] 6 Entering while(1) loop
+[persistent_communication_with_client] got through poll 6 
+[persistent_communication_with_client] Get request is received 6 File: 
+[persistent_communication_with_client] finished first while loop 6
+[persistent_communication_with_client] 6 Entering while(1) loop
+[persistent_communication_with_client] got through poll 6 
+[persistent_communication_with_client] 7 enter function
+[persistent_communication_with_client] 7 Entering while(1) loop
+[persistent_communication_with_client] got through poll 7 
+[persistent_communication_with_client] Get request is received 7 File: 
+[persistent_communication_with_client] finished first while loop 7
+[persistent_communication_with_client] 7 Entering while(1) loop
+[persistent_communication_with_client] got through poll 7 
+[persistent_communication_with_client] 8 enter function
+[persistent_communication_with_client] 8 Entering while(1) loop
+[persistent_communication_with_client] got through poll 8 
+[persistent_communication_with_client] Get request is received 8 File: 
+[persistent_communication_with_client] finished first while loop 8
+[persistent_communication_with_client] 8 Entering while(1) loop
+[persistent_communication_with_client] got through poll 8 
+[persistent_communication_with_client] 9 enter function
+[persistent_communication_with_client] 9 Entering while(1) loop
+[persistent_communication_with_client] got through poll 9 
+[persistent_communication_with_client] Get request is received 9 File: 
+[persistent_communication_with_client] finished first while loop 9
+[persistent_communication_with_client] 9 Entering while(1) loop
+[persistent_communication_with_client] got through poll 9 
+[persistent_communication_with_client] 10 enter function
+[persistent_communication_with_client] 10 Entering while(1) loop
+[persistent_communication_with_client] got through poll 10 
+[persistent_communication_with_client] Get request is received 10 File: 
+[persistent_communication_with_client] finished first while loop 10
+[persistent_communication_with_client] 10 Entering while(1) loop
+[persistent_communication_with_client] got through poll 10 
+[persistent_communication_with_client] 11 enter function
+[persistent_communication_with_client] 11 Entering while(1) loop
+[persistent_communication_with_client] got through poll 11 
+[persistent_communication_with_client] Get request is received 11 File: 
+[persistent_communication_with_client] finished first while loop 11
+[persistent_communication_with_client] 11 Entering while(1) loop
+[persistent_communication_with_client] got through poll 11 
+[persistent_communication_with_client] 13 enter function
+[persistent_communication_with_client] 13 Entering while(1) loop
+[persistent_communication_with_client] got through poll 13 
+[persistent_communication_with_client] Get request is received 13 File: 
+[persistent_communication_with_client] finished first while loop 13
+[persistent_communication_with_client] 13 Entering while(1) loop
+[persistent_communication_with_client] got through poll 13 
+[persistent_communication_with_client] 14 enter function
+[persistent_communication_with_client] 14 Entering while(1) loop
+[persistent_communication_with_client] got through poll 14 
+[persistent_communication_with_client] Get request is received 14 File: 
+[persistent_communication_with_client] finished first while loop 14
+[persistent_communication_with_client] 14 Entering while(1) loop
+[persistent_communication_with_client] got through poll 14 
+[persistent_communication_with_client] 15 enter function
+[persistent_communication_with_client] 15 Entering while(1) loop
+[persistent_communication_with_client] got through poll 15 
+[persistent_communication_with_client] Get request is received 15 File: 
+[persistent_communication_with_client] finished first while loop 15
+[persistent_communication_with_client] 15 Entering while(1) loop
+[persistent_communication_with_client] got through poll 15 
+[persistent_communication_with_client] 16 enter function
+[persistent_communication_with_client] 16 Entering while(1) loop
+[persistent_communication_with_client] got through poll 16 
+[persistent_communication_with_client] Get request is received 16 File: 
+[persistent_communication_with_client] finished first while loop 16
+[persistent_communication_with_client] 16 Entering while(1) loop
+[persistent_communication_with_client] got through poll 16 
+[persistent_communication_with_client] 17 enter function
+[persistent_communication_with_client] 17 Entering while(1) loop
+[persistent_communication_with_client] got through poll 17 
+[persistent_communication_with_client] Get request is received 17 File: 
+[persistent_communication_with_client] finished first while loop 17
+[persistent_communication_with_client] 17 Entering while(1) loop
+[persistent_communication_with_client] got through poll 17 
+[persistent_communication_with_client] 18 enter function
+[persistent_communication_with_client] 18 Entering while(1) loop
+[persistent_communication_with_client] got through poll 18 
+[persistent_communication_with_client] Get request is received 18 File: 
+[persistent_communication_with_client] finished first while loop 18
+[persistent_communication_with_client] 18 Entering while(1) loop
+[persistent_communication_with_client] got through poll 18 
+[persistent_communication_with_client] 19 enter function
+[persistent_communication_with_client] 19 Entering while(1) loop
+[persistent_communication_with_client] got through poll 19 
+[persistent_communication_with_client] Get request is received 19 File: 
+[persistent_communication_with_client] finished first while loop 19
+[persistent_communication_with_client] 19 Entering while(1) loop
+[persistent_communication_with_client] got through poll 19 
+[persistent_communication_with_client] 20 enter function
+[persistent_communication_with_client] 20 Entering while(1) loop
+[persistent_communication_with_client] got through poll 20 
+[persistent_communication_with_client] Get request is received 20 File: 
+[persistent_communication_with_client] finished first while loop 20
+[persistent_communication_with_client] 20 Entering while(1) loop
+[persistent_communication_with_client] got through poll 20 
+[persistent_communication_with_client] 21 enter function
+[persistent_communication_with_client] 23 enter function
+[persistent_communication_with_client] 21 Entering while(1) loop
+[persistent_communication_with_client] 23 Entering while(1) loop
+[persistent_communication_with_client] got through poll 21 
+[persistent_communication_with_client] Get request is received 21 File: 
+[persistent_communication_with_client] got through poll 23 
+[persistent_communication_with_client] finished first while loop 21
+[persistent_communication_with_client] Get request is received 23 File: 
+[persistent_communication_with_client] finished first while loop 23
+[persistent_communication_with_client] 21 Entering while(1) loop
+[persistent_communication_with_client] got through poll 21 
+[persistent_communication_with_client] 23 Entering while(1) loop
+[persistent_communication_with_client] got through poll 23 
+[persistent_communication_with_client] 21 enter function
+[persistent_communication_with_client] 21 Entering while(1) loop
+[persistent_communication_with_client] got through poll 21 
+[persistent_communication_with_client] Get request is received 21 File: 
+[persistent_communication_with_client] finished first while loop 21
+[persistent_communication_with_client] 21 Entering while(1) loop
+[persistent_communication_with_client] got through poll 21 
+[persistent_communication_with_client] 22 enter function
+[persistent_communication_with_client] 22 Entering while(1) loop
+[persistent_communication_with_client] got through poll 22 
+[persistent_communication_with_client] Get request is received 22 File: 
+[persistent_communication_with_client] finished first while loop 22
+[persistent_communication_with_client] 22 Entering while(1) loop
+[persistent_communication_with_client] got through poll 22 
+[persistent_communication_with_client] 23 enter function
+[persistent_communication_with_client] 23 Entering while(1) loop
+[persistent_communication_with_client] got through poll 23 
+[persistent_communication_with_client] Get request is received 23 File: 
+[persistent_communication_with_client] finished first while loop 23
+[persistent_communication_with_client] 23 Entering while(1) loop
+[persistent_communication_with_client] got through poll 23 
+[persistent_communication_with_client] 24 enter function
+[persistent_communication_with_client] 24 Entering while(1) loop
+[persistent_communication_with_client] got through poll 24 
+[persistent_communication_with_client] Get request is received 24 File: 
+[persistent_communication_with_client] finished first while loop 24
+[persistent_communication_with_client] 24 Entering while(1) loop
+[persistent_communication_with_client] got through poll 24 
+[persistent_communication_with_client] 28 enter function
+[persistent_communication_with_client] 28 Entering while(1) loop
+[persistent_communication_with_client] got through poll 28 
+[persistent_communication_with_client] Get request is received 28 File: 
+[persistent_communication_with_client] finished first while loop 28
+[persistent_communication_with_client] 28 Entering while(1) loop
+[persistent_communication_with_client] got through poll 28 
+[persistent_communication_with_client] 29 enter function
+[persistent_communication_with_client] 29 Entering while(1) loop
+[persistent_communication_with_client] got through poll 29 
+[persistent_communication_with_client] Get request is received 29 File: 
+[persistent_communication_with_client] finished first while loop 29
+[persistent_communication_with_client] 29 Entering while(1) loop
+[persistent_communication_with_client] got through poll 29 
+[persistent_communication_with_client] 28 enter function
+[persistent_communication_with_client] 28 Entering while(1) loop
+[persistent_communication_with_client] got through poll 28 
+[persistent_communication_with_client] Get request is received 28 File: 
+[persistent_communication_with_client] finished first while loop 28
+[persistent_communication_with_client] 28 Entering while(1) loop
+[persistent_communication_with_client] got through poll 28 
+[persistent_communication_with_client] 29 enter function
+[persistent_communication_with_client] 29 Entering while(1) loop
+[persistent_communication_with_client] got through poll 29 
+[persistent_communication_with_client] Get request is received 29 File: 
+[persistent_communication_with_client] finished first while loop 29
+[persistent_communication_with_client] 29 Entering while(1) loop
+[persistent_communication_with_client] got through poll 29 
+[persistent_communication_with_client] 30 enter function
+[persistent_communication_with_client] 30 Entering while(1) loop
+[persistent_communication_with_client] got through poll 30 
+[persistent_communication_with_client] Get request is received 30 File: 
+[persistent_communication_with_client] finished first while loop 30
+[persistent_communication_with_client] 30 Entering while(1) loop
+[persistent_communication_with_client] got through poll 30 
+[persistent_communication_with_client] 31 enter function
+[persistent_communication_with_client] 31 Entering while(1) loop
+[persistent_communication_with_client] got through poll 31 
+[persistent_communication_with_client] Get request is received 31 File: 
+[persistent_communication_with_client] finished first while loop 31
+[persistent_communication_with_client] 31 Entering while(1) loop
+[persistent_communication_with_client] got through poll 31 
+[persistent_communication_with_client] 32 enter function
+[persistent_communication_with_client] 32 Entering while(1) loop
+[persistent_communication_with_client] 4 enter function
+[persistent_communication_with_client] 4 Entering while(1) loop
+[persistent_communication_with_client] got through poll 4 
+[persistent_communication_with_client] Get request is received 4 File: 
+[persistent_communication_with_client] finished first while loop 4
+[persistent_communication_with_client] 4 Entering while(1) loop
+[persistent_communication_with_client] got through poll 4 
+[persistent_communication_with_client] 5 enter function
+[persistent_communication_with_client] 5 Entering while(1) loop
+[persistent_communication_with_client] got through poll 5 
+[persistent_communication_with_client] Get request is received 5 File: 
+[persistent_communication_with_client] finished first while loop 5
+[persistent_communication_with_client] 5 Entering while(1) loop
+[persistent_communication_with_client] got through poll 5 
+[persistent_communication_with_client] 6 enter function
+[persistent_communication_with_client] 6 Entering while(1) loop
+[persistent_communication_with_client] got through poll 6 
+[persistent_communication_with_client] Get request is received 6 File: 
+[persistent_communication_with_client] finished first while loop 6
+[persistent_communication_with_client] 6 Entering while(1) loop
+[persistent_communication_with_client] got through poll 6 
+[persistent_communication_with_client] 7 enter function
+[persistent_communication_with_client] 7 Entering while(1) loop
+[persistent_communication_with_client] got through poll 7 
+[persistent_communication_with_client] Get request is received 7 File: 
+[persistent_communication_with_client] finished first while loop 7
+[persistent_communication_with_client] 7 Entering while(1) loop
+[persistent_communication_with_client] got through poll 7 
+[persistent_communication_with_client] 8 enter function
+[persistent_communication_with_client] 8 Entering while(1) loop
+[persistent_communication_with_client] got through poll 8 
+[persistent_communication_with_client] Get request is received 8 File: 
+[persistent_communication_with_client] finished first while loop 8
+[persistent_communication_with_client] 8 Entering while(1) loop
+[persistent_communication_with_client] got through poll 8 
+[persistent_communication_with_client] 9 enter function
+[persistent_communication_with_client] 9 Entering while(1) loop
+[persistent_communication_with_client] got through poll 9 
+[persistent_communication_with_client] Get request is received 9 File: 
+[persistent_communication_with_client] finished first while loop 9
+[persistent_communication_with_client] 9 Entering while(1) loop
+[persistent_communication_with_client] got through poll 9 
+[persistent_communication_with_client] 10 enter function
+[persistent_communication_with_client] 10 Entering while(1) loop
+[persistent_communication_with_client] got through poll 10 
+[persistent_communication_with_client] Get request is received 10 File: 
+[persistent_communication_with_client] finished first while loop 10
+[persistent_communication_with_client] 10 Entering while(1) loop
+[persistent_communication_with_client] got through poll 10 
+[persistent_communication_with_client] 11 enter function
+[persistent_communication_with_client] 11 Entering while(1) loop
+[persistent_communication_with_client] got through poll 11 
+[persistent_communication_with_client] Get request is received 11 File: 
+[persistent_communication_with_client] finished first while loop 11
+[persistent_communication_with_client] 11 Entering while(1) loop
+[persistent_communication_with_client] got through poll 11 
+[persistent_communication_with_client] 13 enter function
+[persistent_communication_with_client] 13 Entering while(1) loop
+[persistent_communication_with_client] got through poll 13 
+[persistent_communication_with_client] Get request is received 13 File: 
+[persistent_communication_with_client] finished first while loop 13
+[persistent_communication_with_client] 13 Entering while(1) loop
+[persistent_communication_with_client] got through poll 13 
+[persistent_communication_with_client] 14 enter function
+[persistent_communication_with_client] 14 Entering while(1) loop
+[persistent_communication_with_client] got through poll 14 
+[persistent_communication_with_client] Get request is received 14 File: 
+[persistent_communication_with_client] finished first while loop 14
+[persistent_communication_with_client] 14 Entering while(1) loop
+[persistent_communication_with_client] got through poll 14 
+[persistent_communication_with_client] 15 enter function
+[persistent_communication_with_client] 15 Entering while(1) loop
+[persistent_communication_with_client] got through poll 15 
+[persistent_communication_with_client] Get request is received 15 File: 
+[persistent_communication_with_client] finished first while loop 15
+[persistent_communication_with_client] 15 Entering while(1) loop
+[persistent_communication_with_client] got through poll 15 
+[persistent_communication_with_client] 16 enter function
+[persistent_communication_with_client] 16 Entering while(1) loop
+[persistent_communication_with_client] got through poll 16 
+[persistent_communication_with_client] Get request is received 16 File: 
+[persistent_communication_with_client] finished first while loop 16
+[persistent_communication_with_client] 16 Entering while(1) loop
+[persistent_communication_with_client] got through poll 16 
+[persistent_communication_with_client] 17 enter function
+[persistent_communication_with_client] 17 Entering while(1) loop
+[persistent_communication_with_client] got through poll 17 
+[persistent_communication_with_client] Get request is received 17 File: 
+[persistent_communication_with_client] finished first while loop 17
+[persistent_communication_with_client] 17 Entering while(1) loop
+[persistent_communication_with_client] got through poll 17 
+[persistent_communication_with_client] 18 enter function
+[persistent_communication_with_client] 18 Entering while(1) loop
+[persistent_communication_with_client] got through poll 18 
+[persistent_communication_with_client] Get request is received 18 File: 
+[persistent_communication_with_client] finished first while loop 18
+[persistent_communication_with_client] 18 Entering while(1) loop
+[persistent_communication_with_client] got through poll 18 
+[persistent_communication_with_client] 19 enter function
+[persistent_communication_with_client] 19 Entering while(1) loop
+[persistent_communication_with_client] got through poll 19 
+[persistent_communication_with_client] Get request is received 19 File: 
+[persistent_communication_with_client] finished first while loop 19
+[persistent_communication_with_client] 19 Entering while(1) loop
+[persistent_communication_with_client] got through poll 19 
+[persistent_communication_with_client] 20 enter function
+[persistent_communication_with_client] 20 Entering while(1) loop
+[persistent_communication_with_client] got through poll 20 
+[persistent_communication_with_client] Get request is received 20 File: 
+[persistent_communication_with_client] finished first while loop 20
+[persistent_communication_with_client] 20 Entering while(1) loop
+[persistent_communication_with_client] got through poll 20 
+[persistent_communication_with_client] 21 enter function
+[persistent_communication_with_client] 21 Entering while(1) loop
+[persistent_communication_with_client] got through poll 21 
+[persistent_communication_with_client] Get request is received 21 File: 
+[persistent_communication_with_client] finished first while loop 21
+[persistent_communication_with_client] 21 Entering while(1) loop
+[persistent_communication_with_client] got through poll 21 
+[persistent_communication_with_client] 22 enter function
+[persistent_communication_with_client] 22 Entering while(1) loop
+[persistent_communication_with_client] got through poll 22 
+[persistent_communication_with_client] Get request is received 22 File: 
+[persistent_communication_with_client] finished first while loop 22
+[persistent_communication_with_client] 22 Entering while(1) loop
+[persistent_communication_with_client] got through poll 22 
+[persistent_communication_with_client] 23 enter function
+[persistent_communication_with_client] 23 Entering while(1) loop
+[persistent_communication_with_client] got through poll 23 
+[persistent_communication_with_client] Get request is received 23 File: 
+[persistent_communication_with_client] finished first while loop 23
+[persistent_communication_with_client] 23 Entering while(1) loop
+[persistent_communication_with_client] got through poll 23 
+[persistent_communication_with_client] 24 enter function
+[persistent_communication_with_client] 24 Entering while(1) loop
+[persistent_communication_with_client] got through poll 24 
+[persistent_communication_with_client] Get request is received 24 File: 
+[persistent_communication_with_client] finished first while loop 24
+[persistent_communication_with_client] 24 Entering while(1) loop
+[persistent_communication_with_client] got through poll 24 
+[persistent_communication_with_client] 28 enter function
+[persistent_communication_with_client] 28 Entering while(1) loop
+[persistent_communication_with_client] got through poll 28 
+[persistent_communication_with_client] Get request is received 28 File: 
+[persistent_communication_with_client] finished first while loop 28
+[persistent_communication_with_client] 28 Entering while(1) loop
+[persistent_communication_with_client] got through poll 28 
+[persistent_communication_with_client] 29 enter function
+[persistent_communication_with_client] 29 Entering while(1) loop
+[persistent_communication_with_client] got through poll 29 
+[persistent_communication_with_client] Get request is received 29 File: 
+[persistent_communication_with_client] finished first while loop 29
+[persistent_communication_with_client] 29 Entering while(1) loop
+[persistent_communication_with_client] got through poll 29 
+[persistent_communication_with_client] 30 enter function
+[persistent_communication_with_client] 30 Entering while(1) loop
+[persistent_communication_with_client] got through poll 30 
+[persistent_communication_with_client] Get request is received 30 File: 
+[persistent_communication_with_client] finished first while loop 30
+[persistent_communication_with_client] 30 Entering while(1) loop
+[persistent_communication_with_client] got through poll 30 
+[persistent_communication_with_client] 31 enter function
+[persistent_communication_with_client] 31 Entering while(1) loop
+[persistent_communication_with_client] got through poll 31 
+[persistent_communication_with_client] Get request is received 31 File: 
+[persistent_communication_with_client] finished first while loop 31
+[persistent_communication_with_client] 31 Entering while(1) loop
+[persistent_communication_with_client] got through poll 31 
+[persistent_communication_with_client] 32 enter function
+[persistent_communication_with_client] 32 Entering while(1) loop
+[persistent_communication_with_client] 32 closing connection, no values from poll
+[persistent_communication_with_client] 4 enter function
+[persistent_communication_with_client] 4 Entering while(1) loop
+[persistent_communication_with_client] got through poll 4 
+[persistent_communication_with_client] Get request is received 4 File: 
+[persistent_communication_with_client] finished first while loop 4
+[persistent_communication_with_client] 4 Entering while(1) loop
+[persistent_communication_with_client] got through poll 4 
+[persistent_communication_with_client] 5 enter function
+[persistent_communication_with_client] 5 Entering while(1) loop
+[persistent_communication_with_client] got through poll 5 
+[persistent_communication_with_client] Get request is received 5 File: 
+[persistent_communication_with_client] finished first while loop 5
+[persistent_communication_with_client] 5 Entering while(1) loop
+[persistent_communication_with_client] got through poll 5 
+[persistent_communication_with_client] 6 enter function
+[persistent_communication_with_client] 6 Entering while(1) loop
+[persistent_communication_with_client] got through poll 6 
+[persistent_communication_with_client] Get request is received 6 File: 
+[persistent_communication_with_client] finished first while loop 6
+[persistent_communication_with_client] 6 Entering while(1) loop
+[persistent_communication_with_client] got through poll 6 
+[persistent_communication_with_client] 7 enter function
+[persistent_communication_with_client] 7 Entering while(1) loop
+[persistent_communication_with_client] got through poll 7 
+[persistent_communication_with_client] Get request is received 7 File: 
+[persistent_communication_with_client] finished first while loop 7
+[persistent_communication_with_client] 7 Entering while(1) loop
+[persistent_communication_with_client] got through poll 7 
+[persistent_communication_with_client] 8 enter function
+[persistent_communication_with_client] 8 Entering while(1) loop
+[persistent_communication_with_client] got through poll 8 
+[persistent_communication_with_client] Get request is received 8 File: 
+[persistent_communication_with_client] finished first while loop 8
+[persistent_communication_with_client] 8 Entering while(1) loop
+[persistent_communication_with_client] got through poll 8 
+[persistent_communication_with_client] 9 enter function
+[persistent_communication_with_client] 9 Entering while(1) loop
+[persistent_communication_with_client] got through poll 9 
+[persistent_communication_with_client] Get request is received 9 File: 
+[persistent_communication_with_client] finished first while loop 9
+[persistent_communication_with_client] 9 Entering while(1) loop
+[persistent_communication_with_client] got through poll 9 
+[persistent_communication_with_client] 10 enter function
+[persistent_communication_with_client] 10 Entering while(1) loop
+[persistent_communication_with_client] got through poll 10 
+[persistent_communication_with_client] Get request is received 10 File: 
+[persistent_communication_with_client] finished first while loop 10
+[persistent_communication_with_client] 10 Entering while(1) loop
+[persistent_communication_with_client] got through poll 10 
+[persistent_communication_with_client] 11 enter function
+[persistent_communication_with_client] 11 Entering while(1) loop
+[persistent_communication_with_client] got through poll 11 
+[persistent_communication_with_client] Get request is received 11 File: 
+[persistent_communication_with_client] finished first while loop 11
+[persistent_communication_with_client] 11 Entering while(1) loop
+[persistent_communication_with_client] got through poll 11 
+[persistent_communication_with_client] 13 enter function
+[persistent_communication_with_client] 13 Entering while(1) loop
+[persistent_communication_with_client] got through poll 13 
+[persistent_communication_with_client] Get request is received 13 File: 
+[persistent_communication_with_client] finished first while loop 13
+[persistent_communication_with_client] 13 Entering while(1) loop
+[persistent_communication_with_client] got through poll 13 
+[persistent_communication_with_client] 14 enter function
+[persistent_communication_with_client] 14 Entering while(1) loop
+[persistent_communication_with_client] got through poll 14 
+[persistent_communication_with_client] Get request is received 14 File: 
+[persistent_communication_with_client] finished first while loop 14
+[persistent_communication_with_client] 14 Entering while(1) loop
+[persistent_communication_with_client] got through poll 14 
+[persistent_communication_with_client] 15 enter function
+[persistent_communication_with_client] 15 Entering while(1) loop
+[persistent_communication_with_client] got through poll 15 
+[persistent_communication_with_client] Get request is received 15 File: 
+[persistent_communication_with_client] finished first while loop 15
+[persistent_communication_with_client] 15 Entering while(1) loop
+[persistent_communication_with_client] got through poll 15 
+[persistent_communication_with_client] 16 enter function
+[persistent_communication_with_client] 16 Entering while(1) loop
+[persistent_communication_with_client] got through poll 16 
+[persistent_communication_with_client] Get request is received 16 File: 
+[persistent_communication_with_client] finished first while loop 16
+[persistent_communication_with_client] 16 Entering while(1) loop
+[persistent_communication_with_client] got through poll 16 
+[persistent_communication_with_client] 17 enter function
+[persistent_communication_with_client] 17 Entering while(1) loop
+[persistent_communication_with_client] got through poll 17 
+[persistent_communication_with_client] Get request is received 17 File: 
+[persistent_communication_with_client] finished first while loop 17
+[persistent_communication_with_client] 17 Entering while(1) loop
+[persistent_communication_with_client] got through poll 17 
+[persistent_communication_with_client] 18 enter function
+[persistent_communication_with_client] 18 Entering while(1) loop
+[persistent_communication_with_client] got through poll 18 
+[persistent_communication_with_client] Get request is received 18 File: 
+[persistent_communication_with_client] finished first while loop 18
+[persistent_communication_with_client] 18 Entering while(1) loop
+[persistent_communication_with_client] got through poll 18 
+[persistent_communication_with_client] 19 enter function
+[persistent_communication_with_client] 19 Entering while(1) loop
+[persistent_communication_with_client] got through poll 19 
+[persistent_communication_with_client] Get request is received 19 File: 
+[persistent_communication_with_client] finished first while loop 19
+[persistent_communication_with_client] 19 Entering while(1) loop
+[persistent_communication_with_client] got through poll 19 
+[persistent_communication_with_client] 20 enter function
+[persistent_communication_with_client] 20 Entering while(1) loop
+[persistent_communication_with_client] got through poll 20 
+[persistent_communication_with_client] Get request is received 20 File: 
+[persistent_communication_with_client] finished first while loop 20
+[persistent_communication_with_client] 20 Entering while(1) loop
+[persistent_communication_with_client] got through poll 20 
+[persistent_communication_with_client] 21 enter function
+[persistent_communication_with_client] 21 Entering while(1) loop
+[persistent_communication_with_client] got through poll 21 
+[persistent_communication_with_client] Get request is received 21 File: 
+[persistent_communication_with_client] finished first while loop 21
+[persistent_communication_with_client] 21 Entering while(1) loop
+[persistent_communication_with_client] got through poll 21 
+[persistent_communication_with_client] 22 enter function
+[persistent_communication_with_client] 22 Entering while(1) loop
+[persistent_communication_with_client] got through poll 22 
+[persistent_communication_with_client] Get request is received 22 File: 
+[persistent_communication_with_client] finished first while loop 22
+[persistent_communication_with_client] 22 Entering while(1) loop
+[persistent_communication_with_client] got through poll 22 
+[persistent_communication_with_client] 23 enter function
+[persistent_communication_with_client] 23 Entering while(1) loop
+[persistent_communication_with_client] got through poll 23 
+[persistent_communication_with_client] Get request is received 23 File: 
+[persistent_communication_with_client] finished first while loop 23
+[persistent_communication_with_client] 23 Entering while(1) loop
+[persistent_communication_with_client] got through poll 23 
+[persistent_communication_with_client] 24 enter function
+[persistent_communication_with_client] 24 Entering while(1) loop
+[persistent_communication_with_client] got through poll 24 
+[persistent_communication_with_client] Get request is received 24 File: 
+[persistent_communication_with_client] finished first while loop 24
+[persistent_communication_with_client] 24 Entering while(1) loop
+[persistent_communication_with_client] got through poll 24 
+[persistent_communication_with_client] 28 enter function
+[persistent_communication_with_client] 28 Entering while(1) loop
+[persistent_communication_with_client] got through poll 28 
+[persistent_communication_with_client] Get request is received 28 File: 
+[persistent_communication_with_client] finished first while loop 28
+[persistent_communication_with_client] 28 Entering while(1) loop
+[persistent_communication_with_client] got through poll 28 
+[persistent_communication_with_client] 29 enter function
+[persistent_communication_with_client] 29 Entering while(1) loop
+[persistent_communication_with_client] got through poll 29 
+[persistent_communication_with_client] Get request is received 29 File: 
+[persistent_communication_with_client] finished first while loop 29
+[persistent_communication_with_client] 29 Entering while(1) loop
+[persistent_communication_with_client] got through poll 29 
+[persistent_communication_with_client] 30 enter function
+[persistent_communication_with_client] 30 Entering while(1) loop
+[persistent_communication_with_client] got through poll 30 
+[persistent_communication_with_client] Get request is received 30 File: 
+[persistent_communication_with_client] finished first while loop 30
+[persistent_communication_with_client] 30 Entering while(1) loop
+[persistent_communication_with_client] got through poll 30 
+[persistent_communication_with_client] 31 enter function
+[persistent_communication_with_client] 31 Entering while(1) loop
+[persistent_communication_with_client] got through poll 31 
+[persistent_communication_with_client] Get request is received 31 File: 
+[persistent_communication_with_client] finished first while loop 31
+[persistent_communication_with_client] 31 Entering while(1) loop
+[persistent_communication_with_client] got through poll 31 
+[persistent_communication_with_client] 32 enter function
+[persistent_communication_with_client] 32 Entering while(1) loop
+[persistent_communication_with_client] 4 enter function
+[persistent_communication_with_client] 4 Entering while(1) loop
+[persistent_communication_with_client] got through poll 4 
+[persistent_communication_with_client] Get request is received 4 File: 
+[persistent_communication_with_client] finished first while loop 4
+[persistent_communication_with_client] 4 Entering while(1) loop
+[persistent_communication_with_client] got through poll 4 
+[persistent_communication_with_client] 5 enter function
+[persistent_communication_with_client] 5 Entering while(1) loop
+[persistent_communication_with_client] got through poll 5 
+[persistent_communication_with_client] Get request is received 5 File: 
+[persistent_communication_with_client] finished first while loop 5
+[persistent_communication_with_client] 5 Entering while(1) loop
+[persistent_communication_with_client] got through poll 5 
+[persistent_communication_with_client] 6 enter function
+[persistent_communication_with_client] 6 Entering while(1) loop
+[persistent_communication_with_client] got through poll 6 
+[persistent_communication_with_client] Get request is received 6 File: 
+[persistent_communication_with_client] finished first while loop 6
+[persistent_communication_with_client] 6 Entering while(1) loop
+[persistent_communication_with_client] got through poll 6 
+[persistent_communication_with_client] 7 enter function
+[persistent_communication_with_client] 7 Entering while(1) loop
+[persistent_communication_with_client] got through poll 7 
+[persistent_communication_with_client] Get request is received 7 File: 
+[persistent_communication_with_client] finished first while loop 7
+[persistent_communication_with_client] 7 Entering while(1) loop
+[persistent_communication_with_client] got through poll 7 
+[persistent_communication_with_client] 8 enter function
+[persistent_communication_with_client] 8 Entering while(1) loop
+[persistent_communication_with_client] got through poll 8 
+[persistent_communication_with_client] Get request is received 8 File: 
+[persistent_communication_with_client] finished first while loop 8
+[persistent_communication_with_client] 8 Entering while(1) loop
+[persistent_communication_with_client] got through poll 8 
+[persistent_communication_with_client] 9 enter function
+[persistent_communication_with_client] 9 Entering while(1) loop
+[persistent_communication_with_client] got through poll 9 
+[persistent_communication_with_client] Get request is received 9 File: 
+[persistent_communication_with_client] finished first while loop 9
+[persistent_communication_with_client] 9 Entering while(1) loop
+[persistent_communication_with_client] got through poll 9 
+[persistent_communication_with_client] 10 enter function
+[persistent_communication_with_client] 10 Entering while(1) loop
+[persistent_communication_with_client] got through poll 10 
+[persistent_communication_with_client] Get request is received 10 File: 
+[persistent_communication_with_client] finished first while loop 10
+[persistent_communication_with_client] 10 Entering while(1) loop
+[persistent_communication_with_client] got through poll 10 
+[persistent_communication_with_client] 11 enter function
+[persistent_communication_with_client] 11 Entering while(1) loop
+[persistent_communication_with_client] got through poll 11 
+[persistent_communication_with_client] Get request is received 11 File: 
+[persistent_communication_with_client] finished first while loop 11
+[persistent_communication_with_client] 11 Entering while(1) loop
+[persistent_communication_with_client] got through poll 11 
+[persistent_communication_with_client] 13 enter function
+[persistent_communication_with_client] 13 Entering while(1) loop
+[persistent_communication_with_client] got through poll 13 
+[persistent_communication_with_client] Get request is received 13 File: 
+[persistent_communication_with_client] finished first while loop 13
+[persistent_communication_with_client] 13 Entering while(1) loop
+[persistent_communication_with_client] got through poll 13 
+[persistent_communication_with_client] 14 enter function
+[persistent_communication_with_client] 14 Entering while(1) loop
+[persistent_communication_with_client] got through poll 14 
+[persistent_communication_with_client] Get request is received 14 File: 
+[persistent_communication_with_client] finished first while loop 14
+[persistent_communication_with_client] 14 Entering while(1) loop
+[persistent_communication_with_client] got through poll 14 
+[persistent_communication_with_client] 15 enter function
+[persistent_communication_with_client] 15 Entering while(1) loop
+[persistent_communication_with_client] got through poll 15 
+[persistent_communication_with_client] Get request is received 15 File: 
+[persistent_communication_with_client] finished first while loop 15
+[persistent_communication_with_client] 15 Entering while(1) loop
+[persistent_communication_with_client] got through poll 15 
+[persistent_communication_with_client] 16 enter function
+[persistent_communication_with_client] 16 Entering while(1) loop
+[persistent_communication_with_client] got through poll 16 
+[persistent_communication_with_client] Get request is received 16 File: 
+[persistent_communication_with_client] finished first while loop 16
+[persistent_communication_with_client] 16 Entering while(1) loop
+[persistent_communication_with_client] got through poll 16 
+[persistent_communication_with_client] 17 enter function
+[persistent_communication_with_client] 17 Entering while(1) loop
+[persistent_communication_with_client] got through poll 17 
+[persistent_communication_with_client] Get request is received 17 File: 
+[persistent_communication_with_client] finished first while loop 17
+[persistent_communication_with_client] 17 Entering while(1) loop
+[persistent_communication_with_client] got through poll 17 
+[pipelined_communication_with_client] 4 enter function
+[pipelined_communication_with_client] 4 Entering while(1) loop
+[pipelined_communication_with_client] got through poll 4 
+[pipelined_communication_with_client] Get request is received 4 File: 
+[pipelined_communication_with_client] Remaining buff characters received 4
+[pipelined_communication_with_client] Remaining buff characters received 4
+[pipelined_communication_with_client] finished first while loop 4
+[pipelined_communication_with_client] 4 enter function
+[pipelined_communication_with_client] 4 Entering while(1) loop
+[pipelined_communication_with_client] got through poll 4 
+[pipelined_communication_with_client] Get request is received 4 File: 
+[pipelined_communication_with_client] Remaining buff characters received 4
+[pipelined_communication_with_client] Remaining buff characters received 4
+[pipelined_communication_with_client] finished first while loop 4
